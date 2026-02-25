@@ -634,8 +634,44 @@ function renderTimeline() {
             generateSunoPrompt();
         });
 
+        // ── Performance Hint (Ek Yönlendirmeler) ─────────────────────
+        const perfSelect = document.createElement('select');
+        perfSelect.className = 'vocal-select perf-select';
+
+        let defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.innerText = '— Ek Detay / Not Yok —';
+        perfSelect.appendChild(defaultOpt);
+
+        const perfGroups = [
+            { group: 'Yapı / Alan', items: ['[Intro]', '[Verse]', '[Verse 1]', '[Verse 2]', '[Pre-Chorus]', '[Chorus]', '[Hook]', '[Post-Chorus]', '[Bridge]', '[Break]', '[Interlude]', '[Instrumental]', '[Rap]', '[Rap Verse]', '[Outro]', '[Tag]'] },
+            { group: 'Okuma Tarzı', items: ['[Spoken]', '[Spoken Word]', '(whisper)', '(softly)', '(higher)', '(lower)', '(spoken)'] },
+            { group: 'Süsleme', items: ['[Adlibs]', '(ad lib)', '[Harmony]', '[Backing Vocals]', '()'] },
+            { group: 'Uzatma / Tekrar', items: ['[Repeat]', '[Refrain]', '[Reprise]', 'x2', 'x3', 'repeat x2', '(repeat)', '(hold)', '(sustain)'] },
+            { group: 'Es / Geçiş', items: ['(fade out)', '[Pause]', '(pause)', '[Breath]', '(breath)', '[Rest]', '[Rest 1 bar]', '[Rest 2 bars]', '[Rest 4 bars]', '...', '—'] }
+        ];
+
+        perfGroups.forEach(g => {
+            let optgroup = document.createElement('optgroup');
+            optgroup.label = g.group;
+            g.items.forEach(item => {
+                let opt = document.createElement('option');
+                opt.value = item;
+                opt.innerText = item;
+                if (item === section.perfHint) opt.selected = true;
+                optgroup.appendChild(opt);
+            });
+            perfSelect.appendChild(optgroup);
+        });
+
+        perfSelect.addEventListener('change', (e) => {
+            section.perfHint = e.target.value;
+            generateSunoPrompt();
+        });
+
         sectionControls.appendChild(vocalSelect);
         sectionControls.appendChild(vocalGenderSelect);
+        sectionControls.appendChild(perfSelect);
 
         const copyBtn = document.createElement('button');
         copyBtn.className = 'icon-btn small-btn';
@@ -1682,9 +1718,17 @@ function generateSunoPrompt() {
     } else {
         // Default: read from global vocal gender dropdown if present
         const globalGender = document.getElementById('vocalGenderSelect') ? document.getElementById('vocalGenderSelect').value : '';
-        if (globalGender && globalGender.includes('Kad\u0131n')) stylePrompt += `, Female Vocals`;
-        else if (globalGender && globalGender.includes('Erkek')) stylePrompt += `, Male Vocals`;
+        if (globalGender === 'Kadın') stylePrompt += `, Female Vocals`;
+        else if (globalGender === 'Erkek') stylePrompt += `, Male Vocals`;
+        else if (globalGender === 'Koro') stylePrompt += `, Choir / Group Vocals`;
+        else if (globalGender === 'inst') stylePrompt += `, Instrumental, No Vocals`;
         else stylePrompt += `, Male and Female vocal duet`;
+    }
+
+    // Append Target Duration
+    const durationValue = document.getElementById('songDuration') ? document.getElementById('songDuration').value : '';
+    if (durationValue) {
+        stylePrompt += `, ~${durationValue} minutes duration`;
     }
 
     // Enforce max 1000 characters limit for style tag
@@ -1809,6 +1853,7 @@ function generateSunoPrompt() {
         // ── BREAK / INSTRUMENTAL section ─────────────────────────────
         if (sec.type === 'break' || genderCode === 'Instrumental') {
             lyricsPrompt += `${bracketLine}\n`;
+            if (sec.perfHint) lyricsPrompt += `${sec.perfHint}\n`;
             lyricsPrompt += `[Chords: ${chordString}]\n`;
             lyricsPrompt += `[No Vocals, Instrumental Fill]\n\n`;
             secIndex++;
@@ -1817,6 +1862,7 @@ function generateSunoPrompt() {
 
         // ── Normal vocal section ─────────────────────────────────────
         lyricsPrompt += `${bracketLine}\n`;
+        if (sec.perfHint) lyricsPrompt += `${sec.perfHint}\n`;
         lyricsPrompt += `[Chords: ${chordString}]\n`;
 
         // Syllable rhythm hint (only when we have syl data)
@@ -2631,7 +2677,7 @@ function liveRefreshPrompt() {
 /** Attach change listeners to every setting that affects the prompt */
 function wirePromptLiveRefresh() {
     const liveIds = [
-        'promptLangSelect', 'vocalGenderSelect',
+        'promptLangSelect', 'vocalGenderSelect', 'songDuration',
         'genreSelect', 'moodSelect', 'scaleSelect', 'keySelect',
         'bpm', 'tempoFeel', 'octaveSelect',
         'instRhythm', 'instBass', 'instHarmony', 'instLead', 'instAtmosphere'
