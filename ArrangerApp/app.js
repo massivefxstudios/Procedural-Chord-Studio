@@ -379,7 +379,7 @@ function fillChords(structure) {
 
     structure.forEach(section => {
         // Pick a random progress pattern for this section type
-        const patterns = PROGRESSION_PATTERNS[section.type];
+        const patterns = PROGRESSION_PATTERNS[section.type] || PROGRESSION_PATTERNS['verse'];
         const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
 
         let chords = [];
@@ -720,7 +720,7 @@ function renderTimeline() {
         regenBtn.title = 'Ölçüye/Geçerli Türe uygun yeni rastgele akorlar üretir';
         regenBtn.onclick = () => {
             if (confirm("Bu bölümdeki akorları tamamen rastgele yeniden oluşturmak istediğinize emin misiniz?")) {
-                const patterns = PROGRESSION_PATTERNS[section.type];
+                const patterns = PROGRESSION_PATTERNS[section.type] || PROGRESSION_PATTERNS['verse'];
                 // Select a random pattern array out of the available ones
                 const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
 
