@@ -572,6 +572,19 @@ button {
     color: #fff;
 }
 
+.perf-select {
+    background: rgba(10, 200, 255, 0.1);
+    border-color: rgba(10, 200, 255, 0.3);
+    color: #70d5ff;
+}
+
+.perf-select:hover,
+.perf-select:focus {
+    background: rgba(10, 200, 255, 0.25);
+    border-color: #0ac8ff;
+    box-shadow: 0 0 10px rgba(10, 200, 255, 0.4);
+}
+
 .section-controls {
     display: flex;
     gap: 0.5rem;
