@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 
 <head>
@@ -48,8 +48,15 @@
                 <div class="persona-detail-actions">
                     <button class="persona-apply-btn" onclick="applyPersona()">✔ Uygula</button>
                     <button class="persona-edit-inline-btn" onclick="openPersonaEditor(previewingPersona)">✏
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Düzenle</button>
-                    <button class="persona-cancel-btn" onclick="clearPersonaPreview()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg> İptal</button>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg> Düzenle</button>
+                    <button class="persona-cancel-btn" onclick="clearPersonaPreview()"><svg width="14" height="14"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12" />
+                        </svg> İptal</button>
                 </div>
             </div>
 
@@ -133,10 +140,22 @@
                 </details>
 
                 <div class="pedit-actions">
-                    <button class="persona-apply-btn" onclick="savePersonaEdit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Kaydet</button>
+                    <button class="persona-apply-btn" onclick="savePersonaEdit()"><svg width="14" height="14"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                            <polyline points="17 21 17 13 7 13 7 21" />
+                            <polyline points="7 3 7 8 15 8" />
+                        </svg> Kaydet</button>
                     <button class="persona-delete-btn" id="peditDeleteBtn" onclick="deletePersona()"
-                        style="display:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Sil</button>
-                    <button class="persona-cancel-btn" onclick="closePersonaEditor()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg> İptal</button>
+                        style="display:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                        </svg> Sil</button>
+                    <button class="persona-cancel-btn" onclick="closePersonaEditor()"><svg width="14" height="14"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12" />
+                        </svg> İptal</button>
                 </div>
             </div>
 
@@ -161,11 +180,19 @@
 
     <header>
         <div class="logo">
-            <h1>PROCEDURAL<span style="color: var(--primary); font-weight: 300;"> — CHORD CREATE STUDIO</span></h1>
-            <span class="subtitle">Arrangement & Chord Studio</span>
+            <h1>PROCEDURAL<span style="color: var(--primary); font-weight: 300;"> — CHORD CREATE STUDIO</span>
+                <span class="version-badge">v3.2.0</span>
+            </h1>
+            <span class="subtitle">Arrangement &amp; Chord Studio &nbsp;·&nbsp; Smart Passing Chords · Suno v5
+                Pro</span>
         </div>
         <div class="project-controls">
-            <button class="icon-btn" onclick="openSaveModal()" title="Projeyi Kaydet"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Kaydet</button>
+            <button class="icon-btn" onclick="openSaveModal()" title="Projeyi Kaydet"><svg width="14" height="14"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                </svg> Kaydet</button>
             <button class="icon-btn" onclick="document.getElementById('loadFileInput').click()" title="Proje Aç"
                 style="border-color: rgba(255,159,10,0.5); color: #ff9f0a;">📂 Aç</button>
             <input type="file" id="loadFileInput" accept=".pcs,.json" style="display:none"
@@ -331,7 +358,12 @@
                 </div>
             </div>
 
-            <button id="btnGenerateStructure" class="primary-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13M9 9l12-2"/><circle cx="6" cy="18" r="3"/><circle cx="21" cy="16" r="3"/></svg> Aranje Oluştur</button>
+            <button id="btnGenerateStructure" class="primary-btn"><svg width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18V5l12-2v13M9 9l12-2" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="21" cy="16" r="3" />
+                </svg> Aranje Oluştur</button>
         </section>
 
         <!-- Song Analysis Panel -->
@@ -448,9 +480,20 @@
                                 <option value="waltz_feel">💃 Vals Ritmi (3/4 Hissiyatı)</option>
                             </select>
                         </div>
-                        <button id="btnPlayAll" class="icon-btn" title="Tümünü Çal"><svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><polygon points='5 3 19 12 5 21 5 3'/></svg> Çal</button>
-                        <button id="btnStop" class="icon-btn" title="Durdur"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12"/></svg> Durdur</button>
-                        <button id="btnExportBaseMIDI" class="icon-btn" title="MIDI İndir"><svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4'/><polyline points='7 10 12 15 17 10'/><line x1='12' y1='15' x2='12' y2='3'/></svg> MIDI İndir</button>
+                        <button id="btnPlayAll" class="icon-btn" title="Tümünü Çal"><svg width='14' height='14'
+                                viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+                                <polygon points='5 3 19 12 5 21 5 3' />
+                            </svg> Çal</button>
+                        <button id="btnStop" class="icon-btn" title="Durdur"><svg width="14" height="14"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="6" y="6" width="12" height="12" />
+                            </svg> Durdur</button>
+                        <button id="btnExportBaseMIDI" class="icon-btn" title="MIDI İndir"><svg width='14' height='14'
+                                viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+                                <path d='M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4' />
+                                <polyline points='7 10 12 15 17 10' />
+                                <line x1='12' y1='15' x2='12' y2='3' />
+                            </svg> MIDI İndir</button>
                     </div>
                 </div>
             </div>
@@ -460,9 +503,22 @@
             </div>
 
             <div class="timeline-actions" style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;">
-                <button id="btnAddSection" class="secondary-btn" style="margin-bottom: 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Yeni Bölüm Ekle</button>
+                <button id="btnAddSection" class="secondary-btn" style="margin-bottom: 0;"><svg width="14" height="14"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg> Yeni Bölüm Ekle</button>
+                <button id="btnUndo" class="secondary-btn" style="margin-bottom: 0; display: none;"><svg width="14"
+                        height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 14h12a5 5 0 005-5v0a5 5 0 00-5-5H3"></path>
+                        <path d="M7 18L3 14l4-4"></path>
+                    </svg> Geri Al</button>
                 <button id="btnClearTimeline" class="secondary-btn"
-                    style="background: rgba(255,69,58,0.2); border-color: rgba(255,69,58,0.5); color: #ff453a; margin-bottom: 0;"><svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><polyline points='3 6 5 6 21 6'/><path d='M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2'/></svg> Temizle</button>
+                    style="background: rgba(255,69,58,0.2); border-color: rgba(255,69,58,0.5); color: #ff453a; margin-bottom: 0;"><svg
+                        width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+                        <polyline points='3 6 5 6 21 6' />
+                        <path d='M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2' />
+                    </svg> Temizle</button>
             </div>
         </section>
 
@@ -684,8 +740,9 @@
                         <option value="inst">Enstrümantal</option>
                     </select>
                 </div>
-                <button id="btnGeneratePrompt" class="generate-prompt-btn">
-                    <span class="gpb-icon">✨</span> Prompt Üret
+                <button id="btnGeneratePrompt" class="generate-prompt-btn"
+                    style="box-shadow: 0 0 15px rgba(216, 69, 255, 0.4);">
+                    <span class="gpb-icon">✨</span> v5 Pro Prompt Üret
                 </button>
             </div>
 
@@ -694,17 +751,25 @@
                 <div class="prompt-out-card">
                     <div class="poc-header poc-style">
                         <span>🎨 Style / Genre</span>
-                        <span class="poc-limit">Maks. 1000 karakter</span>
+                        <span class="poc-limit">v5 Pro Optimizasyonlu</span>
                     </div>
                     <textarea id="sunoStyleOutput" readonly class="poc-textarea"></textarea>
-                    <button class="poc-copy-btn" onclick="copyText('sunoStyleOutput', this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Kopyala</button>
+                    <button class="poc-copy-btn" onclick="copyText('sunoStyleOutput', this)"><svg width="14" height="14"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                        </svg> Kopyala</button>
                 </div>
                 <div class="prompt-out-card">
                     <div class="poc-header poc-negative">
                         <span>🚫 Negative Prompt</span>
                     </div>
                     <textarea id="sunoNegativeOutput" readonly class="poc-textarea poc-neg-ta"></textarea>
-                    <button class="poc-copy-btn" onclick="copyText('sunoNegativeOutput', this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Kopyala</button>
+                    <button class="poc-copy-btn" onclick="copyText('sunoNegativeOutput', this)"><svg width="14"
+                            height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                        </svg> Kopyala</button>
                 </div>
                 <div class="prompt-out-card">
                     <div class="poc-header poc-lyrics">
@@ -712,7 +777,11 @@
                         <span class="poc-limit">Suno formatı</span>
                     </div>
                     <textarea id="sunoLyricsOutput" rows="12" readonly class="poc-textarea"></textarea>
-                    <button class="poc-copy-btn" onclick="copyText('sunoLyricsOutput', this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Kopyala</button>
+                    <button class="poc-copy-btn" onclick="copyText('sunoLyricsOutput', this)"><svg width="14"
+                            height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                        </svg> Kopyala</button>
                 </div>
             </div>
             </div>
@@ -762,18 +831,96 @@
     <aside id="lyricsSidebar" class="lyrics-sidebar open">
         <div class="lyrics-sidebar-header">
             <h3>Şarkı Sözleri</h3>
-            <button id="btnCloseLyrics" class="icon-btn small-btn" style="color: #ff453a;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+            <div style="display:flex;gap:0.4rem;align-items:center;">
+                <button class="icon-btn small-btn ai-key-btn" onclick="openApiKeyModal()"
+                    title="OpenAI API Anahtarı Ayarla">⚙️</button>
+                <button id="btnCloseLyrics" class="icon-btn small-btn" style="color: #ff453a;"><svg width="14"
+                        height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                    </svg></button>
+            </div>
         </div>
-        <p class="description" style="margin-bottom: 1rem; font-size: 0.85rem;">Şarkı sözlerinizi buraya yapıştırın.
+        <p class="description" style="margin-bottom: 0.6rem; font-size: 0.85rem;">Şarkı sözlerinizi buraya yapıştırın.
             Sistem bu sözleri otomatik olarak Intro, Verse, Chorus gibi oluşturulan aranje dizilimine bölüp
             yerleştirecektir.</p>
+
+        <!-- AI Generate Button -->
+        <button id="btnAiLyrics" class="ai-lyrics-btn" onclick="generateLyricsWithAI()">
+            <span class="ai-btn-icon">🤖</span>
+            <span class="ai-btn-text">AI Söz Üret</span>
+            <span id="aiLyricsSpinner" class="ai-spinner" style="display:none;"></span>
+        </button>
+
+        <!-- AI Options Row -->
+        <div class="ai-options-row">
+            <select id="aiLyricLang" class="ai-opt-select" title="Dil Seç">
+                <option value="tr">🇹🇷 Türkçe</option>
+                <option value="en">🇬🇧 İngilizce</option>
+                <option value="mixed">🌐 Mix TR/EN</option>
+            </select>
+            <select id="aiLyricStyle" class="ai-opt-select" title="Yazı Tarzı">
+                <option value="poetic">Şiirsel</option>
+                <option value="emotional">Duygusal</option>
+                <option value="rap">Rap / Akıcı</option>
+                <option value="dark">Karanlık / Melankolik</option>
+                <option value="hopeful">Umutlu</option>
+            </select>
+        </div>
+
         <textarea id="customLyricsInput" placeholder="Satır boşluklarına dikkat ederek yapıştırın..."
-            style="width: 100%; height: calc(100% - 170px); background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px; font-family: inherit; resize: none; margin-bottom: 10px;"></textarea>
+            style="width: 100%; height: calc(100% - 235px); background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px; font-family: inherit; resize: none; margin-bottom: 10px;">[Intro]
+
+[Verse 1]
+
+[Bridge]
+
+[Chorus]
+
+[Verse 2]
+
+[Chorus]
+
+[Outro]
+</textarea>
 
         <button id="btnAnalyzeLyrics" class="primary-btn" style="width: 100%; font-size: 0.9rem; padding: 10px;">
             🔍 Sözlere Göre Analiz Et
         </button>
     </aside>
+
+    <!-- OpenAI API Key Modal -->
+    <div id="apiKeyModal" class="api-modal-overlay" style="display:none;"
+        onclick="if(event.target===this)closeApiKeyModal()">
+        <div class="api-modal-box">
+            <div class="api-modal-header">
+                <h3>⚙️ OpenAI API Ayarları</h3>
+                <button class="icon-btn" onclick="closeApiKeyModal()" style="color:#ff453a;">✕</button>
+            </div>
+            <p class="api-modal-desc">API anahtarınız yalnızca tarayıcınızda yerel olarak saklanır, hiçbir sunucuya
+                gönderilmez.</p>
+            <div class="api-modal-row">
+                <label>🔑 OpenAI API Key</label>
+                <div class="api-key-input-wrap">
+                    <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off" spellcheck="false">
+                    <button class="icon-btn" id="btnToggleKeyVisibility" onclick="toggleKeyVisibility()"
+                        title="Göster/Gizle">👁</button>
+                </div>
+            </div>
+            <div class="api-modal-row">
+                <label>🧠 Model</label>
+                <select id="aiModelSelect">
+                    <option value="gpt-4o-mini">gpt-4o-mini (Hızlı &amp; Uygun)</option>
+                    <option value="gpt-4o">gpt-4o (Güçlü)</option>
+                    <option value="gpt-4-turbo">gpt-4-turbo</option>
+                </select>
+            </div>
+            <div class="api-modal-actions">
+                <button class="api-save-btn" onclick="saveApiKey()">✔ Kaydet</button>
+                <button class="api-clear-btn" onclick="clearApiKey()">🗑 Sil</button>
+            </div>
+            <div id="apiKeyStatus" class="api-key-status"></div>
+        </div>
+    </div>
 
     <script src="midi.js"></script>
     <script src="app.js"></script>

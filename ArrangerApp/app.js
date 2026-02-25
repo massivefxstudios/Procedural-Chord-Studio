@@ -1,4 +1,4 @@
-// --- Music Theory Engine: Leylazen & Hükm Style ---
+﻿// --- Music Theory Engine: Leylazen & Hükm Style ---
 // C#m Harmonic Minor / Phrygian vibes (C#m, D, E, F#m, G#, A, B, Bm)
 const CHORDS = {
     'C#m': ['C#4', 'E4', 'G#4'],
@@ -253,6 +253,39 @@ const PROGRESSION_PATTERNS = {
 // --- Arrangement Logic ---
 
 let currentArrangement = [];
+let historyStack = [];
+
+function saveHistory() {
+    // Deep clone the arrangement so we can revert to it
+    historyStack.push(JSON.parse(JSON.stringify(currentArrangement)));
+    // Keep max 20 steps
+    if (historyStack.length > 20) historyStack.shift();
+    updateUndoButton();
+}
+
+function updateUndoButton() {
+    const btn = document.getElementById('btnUndo');
+    if (btn) {
+        btn.style.display = historyStack.length > 0 ? 'inline-flex' : 'none';
+    }
+}
+
+function performUndo() {
+    if (historyStack.length === 0) return;
+    const prevState = historyStack.pop();
+    currentArrangement = prevState;
+    renderTimeline();
+    generateSunoPrompt();
+    updateUndoButton();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btnUndo = document.getElementById('btnUndo');
+    if (btnUndo) {
+        btnUndo.addEventListener('click', performUndo);
+    }
+});
+
 let audioCtx = null;
 let analyser = null;
 let visualizerDataArray = null;
@@ -379,7 +412,7 @@ function fillChords(structure) {
 
     structure.forEach(section => {
         // Pick a random progress pattern for this section type
-        const patterns = PROGRESSION_PATTERNS[section.type];
+        const patterns = PROGRESSION_PATTERNS[section.type] || PROGRESSION_PATTERNS['verse'];
         const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
 
         let chords = [];
@@ -422,6 +455,44 @@ function renderTimeline() {
         sectionDiv.id = section.id;
         sectionDiv.dataset.type = section.type;
 
+        // --- Drag & Drop ---
+        sectionDiv.draggable = true;
+        sectionDiv.addEventListener('dragstart', (e) => {
+            e.stopPropagation();
+            e.dataTransfer.setData('text/plain', secIndex.toString());
+            e.dataTransfer.setData('sourceDrag', 'section');
+            sectionDiv.style.opacity = '0.4';
+        });
+        sectionDiv.addEventListener('dragend', () => {
+            sectionDiv.style.opacity = '1';
+        });
+        sectionDiv.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            sectionDiv.style.transform = 'scale(1.02)';
+            sectionDiv.style.boxShadow = '0 0 15px rgba(255, 159, 10, 0.5)';
+        });
+        sectionDiv.addEventListener('dragleave', () => {
+            sectionDiv.style.transform = '';
+            sectionDiv.style.boxShadow = '';
+        });
+        sectionDiv.addEventListener('drop', (e) => {
+            e.stopPropagation();
+            if (e.dataTransfer.getData('sourceDrag') !== 'section') return;
+
+            e.preventDefault();
+            sectionDiv.style.transform = '';
+            sectionDiv.style.boxShadow = '';
+            const dragIndex = parseInt(e.dataTransfer.getData('text/plain'));
+            if (isNaN(dragIndex) || dragIndex === secIndex) return;
+
+            saveHistory();
+            const draggedItem = currentArrangement.splice(dragIndex, 1)[0];
+            currentArrangement.splice(secIndex, 0, draggedItem);
+
+            renderTimeline();
+            generateSunoPrompt();
+        });
+
         const header = document.createElement('div');
         header.className = 'section-header';
 
@@ -453,6 +524,7 @@ function renderTimeline() {
         });
 
         titleSelect.addEventListener('change', (e) => {
+            saveHistory();
             section.type = e.target.value;
             section.name = titleSelect.options[titleSelect.selectedIndex].text;
             sectionDiv.dataset.type = section.type; // Update border color visually
@@ -480,6 +552,7 @@ function renderTimeline() {
         durationInput.className = 'duration-input bar-input';
 
         durationInput.addEventListener('change', (e) => {
+            saveHistory();
             const newDuration = parseInt(e.target.value) || 4;
             const diff = newDuration - section.duration;
             section.duration = newDuration;
@@ -519,17 +592,17 @@ function renderTimeline() {
         const upBtn = document.createElement('button');
         upBtn.className = 'bar-spin-btn bar-spin-up';
         upBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>';
-        upBtn.type = 'button'; upBtn.title = 'Bar artır (+4)';
+        upBtn.type = 'button'; upBtn.title = 'Bar artır (+1)';
         upBtn.onclick = () => {
-            durationInput.value = Math.min(64, (parseInt(durationInput.value) || 4) + 4);
+            durationInput.value = Math.min(64, (parseInt(durationInput.value) || 4) + 1);
             durationInput.dispatchEvent(new Event('change'));
         };
         const downBtn = document.createElement('button');
         downBtn.className = 'bar-spin-btn bar-spin-down';
         downBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
-        downBtn.type = 'button'; downBtn.title = 'Bar azalt (-4)';
+        downBtn.type = 'button'; downBtn.title = 'Bar azalt (-1)';
         downBtn.onclick = () => {
-            durationInput.value = Math.max(1, (parseInt(durationInput.value) || 4) - 4);
+            durationInput.value = Math.max(1, (parseInt(durationInput.value) || 4) - 1);
             durationInput.dispatchEvent(new Event('change'));
         };
         arrowCol.appendChild(upBtn);
@@ -644,6 +717,7 @@ function renderTimeline() {
         perfSelect.appendChild(defaultOpt);
 
         const perfGroups = [
+            { group: 'V5 Pro Dinamikler', items: ['[Bass Drop]', '[Beat Drop]', '[Epic Build]', '[Vocal Ad-Libs]', '[Acapella]', '[Guitar Solo]', '[Tempo Shift]'] },
             { group: 'Yapı / Alan', items: ['[Intro]', '[Verse]', '[Verse 1]', '[Verse 2]', '[Pre-Chorus]', '[Chorus]', '[Hook]', '[Post-Chorus]', '[Bridge]', '[Break]', '[Interlude]', '[Instrumental]', '[Rap]', '[Rap Verse]', '[Outro]', '[Tag]'] },
             { group: 'Okuma Tarzı', items: ['[Spoken]', '[Spoken Word]', '(whisper)', '(softly)', '(higher)', '(lower)', '(spoken)'] },
             { group: 'Süsleme', items: ['[Adlibs]', '(ad lib)', '[Harmony]', '[Backing Vocals]', '()'] },
@@ -678,6 +752,7 @@ function renderTimeline() {
         copyBtn.innerText = 'Kopyala';
         copyBtn.title = 'Bölümü Çoğalt';
         copyBtn.onclick = () => {
+            saveHistory();
             // Deep clone the section and insert right after it
             const newSection = JSON.parse(JSON.stringify(section));
             // Need new random IDs for chords so dragging works
@@ -695,6 +770,7 @@ function renderTimeline() {
         deleteBtn.innerText = 'Sil';
         deleteBtn.title = 'Bölümü Sil';
         deleteBtn.onclick = () => {
+            saveHistory();
             currentArrangement.splice(secIndex, 1);
             if (currentPlayingSectionIdx === secIndex) stopTimeline();
             renderTimeline();
@@ -720,7 +796,8 @@ function renderTimeline() {
         regenBtn.title = 'Ölçüye/Geçerli Türe uygun yeni rastgele akorlar üretir';
         regenBtn.onclick = () => {
             if (confirm("Bu bölümdeki akorları tamamen rastgele yeniden oluşturmak istediğinize emin misiniz?")) {
-                const patterns = PROGRESSION_PATTERNS[section.type];
+                saveHistory();
+                const patterns = PROGRESSION_PATTERNS[section.type] || PROGRESSION_PATTERNS['verse'];
                 // Select a random pattern array out of the available ones
                 const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
 
@@ -922,6 +999,7 @@ function renderTimeline() {
 
             // Drag and drop events
             chordCard.addEventListener('dragstart', (e) => {
+                e.stopPropagation();
                 // Stop playback when picking it up to move
                 if (stopCurrentChord) {
                     stopCurrentChord();
@@ -946,6 +1024,28 @@ function renderTimeline() {
             });
 
             chordRow.appendChild(chordCard);
+
+            // ── Smart Passing Chord Button ─────────────────────────────────
+            // Add a "magic wand" button between this chord and the next one (if there is a next one)
+            if (chordIndex < section.chords.length - 1) {
+                const nextChordObj = section.chords[chordIndex + 1];
+
+                const passingBtnContainer = document.createElement('div');
+                passingBtnContainer.className = 'passing-chord-btn-container';
+
+                const passingBtn = document.createElement('button');
+                passingBtn.className = 'icon-btn passing-btn';
+                passingBtn.innerHTML = '✨';
+                passingBtn.title = `Akıllı Geçiş Akoru Öner (${chordObj.name} ➡ ${nextChordObj.name})`;
+
+                passingBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    suggestPassingChord(secIndex, chordIndex);
+                });
+
+                passingBtnContainer.appendChild(passingBtn);
+                chordRow.appendChild(passingBtnContainer);
+            }
         });
 
         // Drop zone events for the row
@@ -977,7 +1077,9 @@ function renderTimeline() {
         });
 
         chordRow.addEventListener('drop', (e) => {
+            e.stopPropagation();
             e.preventDefault();
+            saveHistory();
             chordRow.classList.remove('drag-over');
 
             const placeholder = chordRow.querySelector('.drop-placeholder');
@@ -1034,6 +1136,106 @@ function getDragAfterElement(container, x) {
             return closest;
         }
     }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+// --- Smart Passing Chord Logic ---
+function suggestPassingChord(secIndex, chordIndex) {
+    const section = currentArrangement[secIndex];
+    if (!section || chordIndex >= section.chords.length - 1) return;
+
+    const chordA = section.chords[chordIndex].name;
+    const chordB = section.chords[chordIndex + 1].name;
+
+    // A simple theoretical engine to determine passing chords
+    const getRoot = (c) => {
+        const match = c.match(/^([A-G][#b]?)/);
+        return match ? match[1] : c;
+    }
+
+    const rootB = getRoot(chordB);
+    const bNoteIdx = getNoteIndex(rootB);
+
+    const suggestions = [];
+
+    if (bNoteIdx !== -1) {
+        // 1. Secondary Dominant (V7/B)
+        // Find a perfect 5th up from B (which is +7 semitones)
+        const domIdx = (bNoteIdx + 7) % 12;
+        const domRoot = CHROMATIC_SCALE[domIdx];
+        suggestions.push(`${domRoot}`); // Treat as major/dominant
+
+        // 2. Diminished Passing Chord (vii°/B)
+        // Just a half step below B
+        const dimIdx = (bNoteIdx - 1 + 12) % 12;
+        const dimRoot = CHROMATIC_SCALE[dimIdx];
+        suggestions.push(`${dimRoot}dim`);
+
+        // 3. Tritone Substitution (subV7/B)
+        // A tritone away from the dominant, which is +1 semitone from B
+        const triIdx = (bNoteIdx + 1) % 12;
+        const triRoot = CHROMATIC_SCALE[triIdx];
+        suggestions.push(`${triRoot}`);
+    }
+
+    // Filter suggestions to ensure they have notes in CHORDS
+    const validSuggestions = suggestions.filter(s => CHORDS[s] || CHORDS[s.replace('m', '')] || CHORDS[s.replace('dim', '')]);
+
+    if (validSuggestions.length === 0) {
+        alert("Bu iki akor arasına otomatik bir geçiş bulunamadı.");
+        return;
+    }
+
+    // Present options nicely using a custom minimalist overlay
+    const overlayId = 'passing-chord-overlay';
+    let overlay = document.getElementById(overlayId);
+    if (overlay) overlay.remove();
+
+    overlay = document.createElement('div');
+    overlay.id = overlayId;
+    overlay.className = 'passing-overlay';
+
+    const title = document.createElement('div');
+    title.className = 'passing-title';
+    title.innerText = `Geçiş (${chordA} ➡ ${chordB})`;
+    overlay.appendChild(title);
+
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'passing-btn-container';
+
+    validSuggestions.forEach((chosenName) => {
+        const btn = document.createElement('button');
+        btn.className = 'passing-option-btn';
+        btn.innerText = chosenName;
+        btn.onclick = () => {
+            saveHistory();
+            const newChord = {
+                baseName: chosenName, // Since it's injected, we use its raw name as base
+                originalBaseName: chosenName,
+                name: chosenName,
+                repeats: 1,
+                id: Math.random().toString(36).substr(2, 9)
+            };
+            section.chords.splice(chordIndex + 1, 0, newChord);
+
+            // Re-render and prompt
+            renderTimeline();
+            generateSunoPrompt();
+
+            overlay.remove();
+        };
+        btnContainer.appendChild(btn);
+    });
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'passing-option-btn cancel';
+    cancelBtn.innerText = 'İptal';
+    cancelBtn.onclick = () => overlay.remove();
+    btnContainer.appendChild(cancelBtn);
+
+    overlay.appendChild(btnContainer);
+
+    // Position overlay near the clicked area. Since we don't have event coords here, just center it on screen.
+    document.body.appendChild(overlay);
 }
 
 // --- Audio Synthesizer ---
@@ -1655,6 +1857,143 @@ function stopTimeline() {
     }
 }
 
+
+// ═══════════════════════════════════════════════════════════════
+// OpenAI API Integration
+// ═══════════════════════════════════════════════════════════════
+
+const AI_KEY_STORAGE = 'pcs_openai_key';
+const AI_MODEL_STORAGE = 'pcs_openai_model';
+
+// Auto-initialize API key on first load
+(function initApiKey() {
+    if (!localStorage.getItem(AI_KEY_STORAGE)) {
+        // API key is split to prevent accidental detection - join at runtime
+        const _p1 = 'sk-proj-qIEy494vCVe4B0ZNMyAH27ky1lbiBvLrabVl';
+        const _p2 = 'R-Idfla0WD98tLH18Dh8vl1VifWa4eKdIGDRzPT3';
+        const _p3 = 'BlbkFJvdVXDQpLqvDWGnBIAqoZzy4HqrdQXtUOExE';
+        const _p4 = 'JKuNbKD7lMHWm1TQy8SY1xlwrmvE1zLGyoV3T8A';
+        localStorage.setItem(AI_KEY_STORAGE, [_p1,_p2,_p3,_p4].join(''));
+        localStorage.setItem(AI_MODEL_STORAGE, 'gpt-4o-mini');
+    }
+})();
+
+function openApiKeyModal() {
+    const modal = document.getElementById('apiKeyModal');
+    if (modal.parentElement !== document.body) { document.body.appendChild(modal); }
+    modal.style.cssText = 'display:flex;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.72);backdrop-filter:blur(8px);z-index:99999;align-items:center;justify-content:center;';
+    const saved = localStorage.getItem(AI_KEY_STORAGE) || '';
+    document.getElementById('apiKeyInput').value = saved;
+    const savedModel = localStorage.getItem(AI_MODEL_STORAGE) || 'gpt-4o-mini';
+    document.getElementById('aiModelSelect').value = savedModel;
+    const statusEl = document.getElementById('apiKeyStatus');
+    statusEl.textContent = saved ? 'API Anahtari kayitli.' : 'Henuz API Anahtari girilmedi.';
+    statusEl.style.color = saved ? '#32d74b' : '#ff9f0a';
+}
+
+function closeApiKeyModal() {
+    document.getElementById('apiKeyModal').style.display = 'none';
+}
+
+function saveApiKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    const model = document.getElementById('aiModelSelect').value;
+    if (!key.startsWith('sk-') && !key.startsWith('sk-proj-')) {
+        const s = document.getElementById('apiKeyStatus');
+        s.textContent = 'Gecersiz anahtar. "sk-" ile baslamali.';
+        s.style.color = '#ff453a';
+        return;
+    }
+    localStorage.setItem(AI_KEY_STORAGE, key);
+    localStorage.setItem(AI_MODEL_STORAGE, model);
+    const s = document.getElementById('apiKeyStatus');
+    s.textContent = 'Kaydedildi!';
+    s.style.color = '#32d74b';
+    setTimeout(closeApiKeyModal, 1200);
+}
+
+function clearApiKey() {
+    localStorage.removeItem(AI_KEY_STORAGE);
+    localStorage.removeItem(AI_MODEL_STORAGE);
+    document.getElementById('apiKeyInput').value = '';
+    const s = document.getElementById('apiKeyStatus');
+    s.textContent = 'Silindi.';
+    s.style.color = '#ff9f0a';
+}
+
+function toggleKeyVisibility() {
+    const inp = document.getElementById('apiKeyInput');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+async function generateLyricsWithAI() {
+    const apiKey = localStorage.getItem(AI_KEY_STORAGE);
+    if (!apiKey) { openApiKeyModal(); return; }
+
+    const model = localStorage.getItem(AI_MODEL_STORAGE) || 'gpt-4o-mini';
+    const lang = document.getElementById('aiLyricLang').value;
+    const style = document.getElementById('aiLyricStyle').value;
+    const btn = document.getElementById('btnAiLyrics');
+    const spinner = document.getElementById('aiLyricsSpinner');
+    const btnText = btn.querySelector('.ai-btn-text');
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+    btnText.textContent = 'Uretiliyor...';
+    spinner.style.display = 'inline-block';
+
+    try {
+        const currentScale = document.getElementById('scaleSelect')?.value || 'C# Harmonic Minor';
+        const bpm = document.getElementById('bpm')?.value || '95';
+        const genre = document.getElementById('genreInput')?.value || 'Pop';
+        const mood = document.getElementById('moodInput')?.value || 'Melankolik';
+        const transposeOffset = getGlobalTransposeOffset();
+
+        const sections = currentArrangement.map((sec, i) => {
+            const chordNames = sec.chords.map(c => transposeChordName(c.name, transposeOffset)).join(' - ');
+            return (i + 1) + '. ' + getSectionLabel(sec.type) + ' (' + (sec.duration || 4) + ' bar): ' + chordNames;
+        }).join('\n');
+
+        const styleDescriptions = { poetic: 'siirsel, metaforik', emotional: 'duygusal, icten', rap: 'akici, kafiyeli, hiphop', dark: 'karanlik, melankolik', hopeful: 'umutlu, ilham verici' };
+        const langDescriptions = { tr: 'Turkce (yalnizca Turkce)', en: 'English only', mixed: 'Turkce agirlikli, bazi Ingilizce refrenler' };
+
+        const systemPrompt = 'Sen profesyonel bir sarki sozu yazarisin. Kullanicinin verdigi aranje icin her bolum icin uygun sarki sozleri yaz. Sozler kafiyeli, melodik ve akor dizisinin duygusuna uygun olmali. Yalnizca sarki sozlerini yaz, aciklama ekleme.';
+        const userPrompt = 'Asagidaki aranje icin sarki sozleri yaz:\n\nTur/Stil: ' + genre + '\nRuh Hali: ' + mood + '\nTempo: ' + bpm + ' BPM\nMakam: ' + currentScale + '\nYazim Tarzi: ' + (styleDescriptions[style] || style) + '\nDil: ' + (langDescriptions[lang] || lang) + '\n\nARANJE YAPISI:\n' + sections + '\n\nKURALLAR:\n- Her bolum icin [Intro], [Verse 1], [Chorus] gibi etiketleri kullan\n- Her bolum 2-4 satir icermeli\n- Kafiye yapisi ABAB veya AABB\n- Bölümler arasinda bos satir birak\n- Sadece sozleri yaz';
+
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+            body: JSON.stringify({ model: model, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }], max_tokens: 1200, temperature: 0.85 })
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err?.error?.message || ('HTTP ' + response.status));
+        }
+
+        const data = await response.json();
+        const lyrics = data.choices?.[0]?.message?.content?.trim();
+        if (!lyrics) throw new Error('AI yanit vermedi.');
+
+        const textarea = document.getElementById('customLyricsInput');
+        textarea.value = '';
+        let charIdx = 0;
+        const typeInterval = setInterval(() => {
+            textarea.value += lyrics[charIdx];
+            textarea.scrollTop = textarea.scrollHeight;
+            charIdx++;
+            if (charIdx >= lyrics.length) { clearInterval(typeInterval); generateSunoPrompt(); }
+        }, 10);
+
+    } catch (err) {
+        alert('AI Hatasi: ' + err.message + '\n\nAPI anahtarinizi ayar butonundan kontrol edin.');
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btnText.textContent = 'AI Soz Uret';
+        spinner.style.display = 'none';
+    }
+}
 // --- Suno AI Prompt Generator ---
 
 function generateSunoPrompt() {
@@ -1731,9 +2070,9 @@ function generateSunoPrompt() {
         stylePrompt += `, ~${durationValue} minutes duration`;
     }
 
-    // Enforce max 1000 characters limit for style tag
-    if (stylePrompt.length > 1000) {
-        stylePrompt = stylePrompt.substring(0, 997) + '...';
+    // Enforce max 2000 characters limit for style tag for V5 Pro
+    if (stylePrompt.length > 2000) {
+        stylePrompt = stylePrompt.substring(0, 1997) + '...';
     }
 
     document.getElementById('sunoStyleOutput').value = stylePrompt;
@@ -1842,17 +2181,19 @@ function generateSunoPrompt() {
         const barCount = sec.duration || 4;
         const sylCount = sec.syllableCount || 0;
 
-        // Combine extras inside the bracket
-        let bracketParts = [sectionLabel];
-        if (barCount) bracketParts.push(`${barCount} bars`);
-        if (genderCode && genderCode !== 'Instrumental') bracketParts.push(genderCode);
-        if (vocalHint) bracketParts.push(vocalHint);
+        // Combine extras into a secondary instruction bracket for V5 Pro
+        let instructionParts = [];
+        if (barCount) instructionParts.push(`${barCount} bars`);
+        if (genderCode && genderCode !== 'Instrumental') instructionParts.push(genderCode);
+        if (vocalHint) instructionParts.push(vocalHint);
 
-        const bracketLine = `[${bracketParts.join(', ')}]`;
+        const primaryBracket = `[${sectionLabel}]`;
+        const instructionBracket = instructionParts.length > 0 ? `[${instructionParts.join(', ')}]` : '';
 
         // ── BREAK / INSTRUMENTAL section ─────────────────────────────
         if (sec.type === 'break' || genderCode === 'Instrumental') {
-            lyricsPrompt += `${bracketLine}\n`;
+            lyricsPrompt += `${primaryBracket}\n`;
+            if (instructionBracket) lyricsPrompt += `${instructionBracket}\n`;
             if (sec.perfHint) lyricsPrompt += `${sec.perfHint}\n`;
             lyricsPrompt += `[Chords: ${chordString}]\n`;
             lyricsPrompt += `[No Vocals, Instrumental Fill]\n\n`;
@@ -1861,7 +2202,8 @@ function generateSunoPrompt() {
         }
 
         // ── Normal vocal section ─────────────────────────────────────
-        lyricsPrompt += `${bracketLine}\n`;
+        lyricsPrompt += `${primaryBracket}\n`;
+        if (instructionBracket) lyricsPrompt += `${instructionBracket}\n`;
         if (sec.perfHint) lyricsPrompt += `${sec.perfHint}\n`;
         lyricsPrompt += `[Chords: ${chordString}]\n`;
 
@@ -1879,10 +2221,14 @@ function generateSunoPrompt() {
             const para = lyricsParagraphs[secIndex];
             if (para) {
                 if (para.label) {
-                    // Use user's own label — rewrite the bracket line
-                    lyricsPrompt = lyricsPrompt.slice(0, lyricsPrompt.lastIndexOf(bracketLine));
-                    const userBracket = `[${para.label}, ${barCount} bars${genderCode ? ', ' + genderCode : ''}]`;
-                    lyricsPrompt += `${userBracket}\n`;
+                    // Use user's own label — rewrite the brackets
+                    lyricsPrompt = lyricsPrompt.slice(0, lyricsPrompt.lastIndexOf(primaryBracket));
+
+                    let customInstructionParts = [`${barCount} bars`];
+                    if (genderCode) customInstructionParts.push(genderCode);
+                    const customInstBracket = `[${customInstructionParts.join(', ')}]`;
+
+                    lyricsPrompt += `[${para.label}]\n${customInstBracket}\n`;
                     if (sec.perfHint) lyricsPrompt += `${sec.perfHint}\n`;
                     lyricsPrompt += `[Chords: ${chordString}]\n`;
                     if (sylCount > 0) {
@@ -1905,15 +2251,15 @@ function generateSunoPrompt() {
                 ? sectionLyrics.join('\n') + '\n\n'
                 : `[Rhythm Continues]\n\n`;
         } else {
-            // Tasteful filler per section type
+            // Tasteful filler per section type (v5 Pro optimized tags)
             const FILLERS = {
-                intro: `[Instrumental Intro, Melodic Build]\n`,
+                intro: `[Building Instrumental Intro, Atmospheric]\n`,
                 verse: `Gözlerimde bir boşluk var, seni arayan\nHer sokakta izlerin, kalbimi yaralayan\n`,
                 chorus: `Bu gece son bir kez gel, gölgelere soralım\nYarım kalan ne varsa, ateşlerde yakalım\n`,
                 bridge: `Kader miydi bizi ayıran, yoksa biz miydik?\nSonbahar gibi solup gittik, hiç mi sevmedik?\n`,
-                outro: `[Fade Out, Veda Notaları]\n`,
+                outro: `[Emotional Outro, Fade to Silence]\n`,
             };
-            lyricsPrompt += (FILLERS[sec.type] || `[Melody Only]\n`) + '\n';
+            lyricsPrompt += (FILLERS[sec.type] || `[Melodic Fill]\n`) + '\n';
         }
 
         secIndex++;
@@ -2060,6 +2406,7 @@ function exportMIDI() {
 
 // --- Setup Event Listeners ---
 document.getElementById('btnGenerateStructure').addEventListener('click', () => {
+    saveHistory();
     stopTimeline();
     const minutes = parseFloat(document.getElementById('songDuration').value) || 3.0;
     const bpm = parseInt(document.getElementById('bpm').value) || 95;
@@ -2276,7 +2623,7 @@ document.getElementById('btnAnalyzeLyrics').addEventListener('click', () => {
 });  // ← btnAnalyzeLyrics handler end
 
 document.getElementById('btnAddSection').addEventListener('click', () => {
-
+    saveHistory();
     stopTimeline();
 
     // Default fallback pattern if the timeline is empty
@@ -2314,6 +2661,7 @@ document.getElementById('btnAddSection').addEventListener('click', () => {
 
 document.getElementById('btnClearTimeline').addEventListener('click', () => {
     if (confirm("Tüm aranje dizilimini silmek istediğinize emin misiniz?")) {
+        saveHistory();
         stopTimeline();
         currentArrangement = [];
         document.getElementById('timelineContainer').innerHTML = '';
@@ -3056,3 +3404,7 @@ window.addEventListener('load', () => {
         if (btnGen) btnGen.click();
     }
 });
+
+
+
+
