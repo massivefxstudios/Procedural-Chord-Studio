@@ -1882,7 +1882,9 @@ function generateSunoPrompt() {
                     // Use user's own label — rewrite the bracket line
                     lyricsPrompt = lyricsPrompt.slice(0, lyricsPrompt.lastIndexOf(bracketLine));
                     const userBracket = `[${para.label}, ${barCount} bars${genderCode ? ', ' + genderCode : ''}]`;
-                    lyricsPrompt += `${userBracket}\n[Chords: ${chordString}]\n`;
+                    lyricsPrompt += `${userBracket}\n`;
+                    if (sec.perfHint) lyricsPrompt += `${sec.perfHint}\n`;
+                    lyricsPrompt += `[Chords: ${chordString}]\n`;
                     if (sylCount > 0) {
                         const density = sylCount / barCount;
                         const rhythmDesc = density > 5 ? 'fast, dense rhythm' : density > 3 ? 'flowing, natural rhythm' : 'slow, expressive rhythm';
