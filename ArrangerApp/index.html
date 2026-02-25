@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 
 <head>
@@ -180,8 +180,11 @@
 
     <header>
         <div class="logo">
-            <h1>PROCEDURAL<span style="color: var(--primary); font-weight: 300;"> — CHORD CREATE STUDIO</span></h1>
-            <span class="subtitle">Arrangement & Chord Studio</span>
+            <h1>PROCEDURAL<span style="color: var(--primary); font-weight: 300;"> — CHORD CREATE STUDIO</span>
+                <span class="version-badge">v3.2.0</span>
+            </h1>
+            <span class="subtitle">Arrangement &amp; Chord Studio &nbsp;·&nbsp; Smart Passing Chords · Suno v5
+                Pro</span>
         </div>
         <div class="project-controls">
             <button class="icon-btn" onclick="openSaveModal()" title="Projeyi Kaydet"><svg width="14" height="14"
@@ -505,6 +508,11 @@
                         <line x1="12" y1="5" x2="12" y2="19" />
                         <line x1="5" y1="12" x2="19" y2="12" />
                     </svg> Yeni Bölüm Ekle</button>
+                <button id="btnUndo" class="secondary-btn" style="margin-bottom: 0; display: none;"><svg width="14"
+                        height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 14h12a5 5 0 005-5v0a5 5 0 00-5-5H3"></path>
+                        <path d="M7 18L3 14l4-4"></path>
+                    </svg> Geri Al</button>
                 <button id="btnClearTimeline" class="secondary-btn"
                     style="background: rgba(255,69,58,0.2); border-color: rgba(255,69,58,0.5); color: #ff453a; margin-bottom: 0;"><svg
                         width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
@@ -732,8 +740,9 @@
                         <option value="inst">Enstrümantal</option>
                     </select>
                 </div>
-                <button id="btnGeneratePrompt" class="generate-prompt-btn">
-                    <span class="gpb-icon">✨</span> Prompt Üret
+                <button id="btnGeneratePrompt" class="generate-prompt-btn"
+                    style="box-shadow: 0 0 15px rgba(216, 69, 255, 0.4);">
+                    <span class="gpb-icon">✨</span> v5 Pro Prompt Üret
                 </button>
             </div>
 
@@ -742,7 +751,7 @@
                 <div class="prompt-out-card">
                     <div class="poc-header poc-style">
                         <span>🎨 Style / Genre</span>
-                        <span class="poc-limit">Maks. 1000 karakter</span>
+                        <span class="poc-limit">v5 Pro Optimizasyonlu</span>
                     </div>
                     <textarea id="sunoStyleOutput" readonly class="poc-textarea"></textarea>
                     <button class="poc-copy-btn" onclick="copyText('sunoStyleOutput', this)"><svg width="14" height="14"

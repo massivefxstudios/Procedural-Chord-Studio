@@ -89,6 +89,22 @@ h1 {
     text-transform: uppercase;
 }
 
+.version-badge {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 0.7rem;
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #80d8ff;
+    background: rgba(10, 150, 255, 0.15);
+    border: 1px solid rgba(10, 200, 255, 0.35);
+    border-radius: 50px;
+    padding: 0.2rem 0.65rem;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 0 8px rgba(10, 200, 255, 0.2);
+}
+
 .container {
     width: 90%;
     max-width: 1100px;
@@ -337,7 +353,7 @@ button {
     border: none;
     cursor: pointer;
     outline: none;
-    appearance: none;
+    appearance: auto;
     /* Hide default arrow to look cleaner, but let's keep it visible so they know it's a dropdown */
     -webkit-appearance: menulist;
 }
@@ -606,6 +622,116 @@ button {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     border: 1px dotted rgba(255, 255, 255, 0.05);
+}
+
+.passing-chord-btn-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+}
+
+.passing-btn {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-shadow: 0 0 10px rgba(216, 69, 255, 0.8);
+}
+
+.chord-row:hover .passing-btn {
+    opacity: 0.4;
+    transform: scale(0.8);
+}
+
+.passing-btn:hover {
+    opacity: 1 !important;
+    transform: scale(1.2) !important;
+    text-shadow: 0 0 15px rgba(255, 159, 10, 1);
+}
+
+/* Custom Overlay for Passing Chords */
+.passing-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(10, 15, 30, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(10, 200, 255, 0.3);
+    border-radius: 20px;
+    padding: 1.5rem;
+    z-index: 10000;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(10, 200, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeInScale 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.passing-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(10, 200, 255, 0.5);
+}
+
+.passing-btn-container {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.passing-option-btn {
+    background: linear-gradient(135deg, rgba(10, 150, 255, 0.2), rgba(0, 100, 200, 0.1));
+    border: 1px solid rgba(10, 200, 255, 0.4);
+    color: #aae0ff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(10, 200, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.passing-option-btn:hover {
+    background: linear-gradient(135deg, rgba(10, 150, 255, 0.4), rgba(0, 100, 200, 0.2));
+    border-color: #0ac8ff;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(10, 200, 255, 0.3), 0 0 15px rgba(10, 200, 255, 0.4);
+}
+
+.passing-option-btn.cancel {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+    box-shadow: none;
+}
+
+.passing-option-btn.cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .chord-card {
@@ -2089,6 +2215,7 @@ textarea:focus {
 .bar-input::-webkit-inner-spin-button,
 .bar-input::-webkit-outer-spin-button {
     -webkit-appearance: none;
+    appearance: none;
 }
 
 /* Custom up/down overlay using wrapper approach */
@@ -2125,6 +2252,7 @@ textarea:focus {
     color: #00e0d8;
     box-shadow: none !important;
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .bar-spin-wrapper input[type=number]:focus {
