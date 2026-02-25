@@ -1,4 +1,4 @@
-// --- Music Theory Engine: Leylazen & Hükm Style ---
+﻿// --- Music Theory Engine: Leylazen & Hükm Style ---
 // C#m Harmonic Minor / Phrygian vibes (C#m, D, E, F#m, G#, A, B, Bm)
 const CHORDS = {
     'C#m': ['C#4', 'E4', 'G#4'],
@@ -1857,6 +1857,129 @@ function stopTimeline() {
     }
 }
 
+
+// ═══════════════════════════════════════════════════════════════
+// OpenAI API Integration
+// ═══════════════════════════════════════════════════════════════
+
+const AI_KEY_STORAGE = 'pcs_openai_key';
+const AI_MODEL_STORAGE = 'pcs_openai_model';
+
+function openApiKeyModal() {
+    const modal = document.getElementById('apiKeyModal');
+    modal.style.display = 'flex';
+    const saved = localStorage.getItem(AI_KEY_STORAGE) || '';
+    document.getElementById('apiKeyInput').value = saved;
+    const savedModel = localStorage.getItem(AI_MODEL_STORAGE) || 'gpt-4o-mini';
+    document.getElementById('aiModelSelect').value = savedModel;
+    const statusEl = document.getElementById('apiKeyStatus');
+    statusEl.textContent = saved ? 'API Anahtari kayitli.' : 'Henuz API Anahtari girilmedi.';
+    statusEl.style.color = saved ? '#32d74b' : '#ff9f0a';
+}
+
+function closeApiKeyModal() {
+    document.getElementById('apiKeyModal').style.display = 'none';
+}
+
+function saveApiKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    const model = document.getElementById('aiModelSelect').value;
+    if (!key.startsWith('sk-')) {
+        const s = document.getElementById('apiKeyStatus');
+        s.textContent = 'Gecersiz anahtar. "sk-" ile baslamali.';
+        s.style.color = '#ff453a';
+        return;
+    }
+    localStorage.setItem(AI_KEY_STORAGE, key);
+    localStorage.setItem(AI_MODEL_STORAGE, model);
+    const s = document.getElementById('apiKeyStatus');
+    s.textContent = 'Kaydedildi!';
+    s.style.color = '#32d74b';
+    setTimeout(closeApiKeyModal, 1200);
+}
+
+function clearApiKey() {
+    localStorage.removeItem(AI_KEY_STORAGE);
+    localStorage.removeItem(AI_MODEL_STORAGE);
+    document.getElementById('apiKeyInput').value = '';
+    const s = document.getElementById('apiKeyStatus');
+    s.textContent = 'Silindi.';
+    s.style.color = '#ff9f0a';
+}
+
+function toggleKeyVisibility() {
+    const inp = document.getElementById('apiKeyInput');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+async function generateLyricsWithAI() {
+    const apiKey = localStorage.getItem(AI_KEY_STORAGE);
+    if (!apiKey) { openApiKeyModal(); return; }
+
+    const model = localStorage.getItem(AI_MODEL_STORAGE) || 'gpt-4o-mini';
+    const lang = document.getElementById('aiLyricLang').value;
+    const style = document.getElementById('aiLyricStyle').value;
+    const btn = document.getElementById('btnAiLyrics');
+    const spinner = document.getElementById('aiLyricsSpinner');
+    const btnText = btn.querySelector('.ai-btn-text');
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+    btnText.textContent = 'Uretiliyor...';
+    spinner.style.display = 'inline-block';
+
+    try {
+        const currentScale = document.getElementById('scaleSelect')?.value || 'C# Harmonic Minor';
+        const bpm = document.getElementById('bpm')?.value || '95';
+        const genre = document.getElementById('genreInput')?.value || 'Pop';
+        const mood = document.getElementById('moodInput')?.value || 'Melankolik';
+        const transposeOffset = getGlobalTransposeOffset();
+
+        const sections = currentArrangement.map((sec, i) => {
+            const chordNames = sec.chords.map(c => transposeChordName(c.name, transposeOffset)).join(' - ');
+            return (i + 1) + '. ' + getSectionLabel(sec.type) + ' (' + (sec.duration || 4) + ' bar): ' + chordNames;
+        }).join('\n');
+
+        const styleDescriptions = { poetic: 'siirsel, metaforik', emotional: 'duygusal, icten', rap: 'akici, kafiyeli, hiphop', dark: 'karanlik, melankolik', hopeful: 'umutlu, ilham verici' };
+        const langDescriptions = { tr: 'Turkce (yalnizca Turkce)', en: 'English only', mixed: 'Turkce agirlikli, bazi Ingilizce refrenler' };
+
+        const systemPrompt = 'Sen profesyonel bir sarki sozu yazarisin. Kullanicinin verdigi aranje icin her bolum icin uygun sarki sozleri yaz. Sozler kafiyeli, melodik ve akor dizisinin duygusuna uygun olmali. Yalnizca sarki sozlerini yaz, aciklama ekleme.';
+        const userPrompt = 'Asagidaki aranje icin sarki sozleri yaz:\n\nTur/Stil: ' + genre + '\nRuh Hali: ' + mood + '\nTempo: ' + bpm + ' BPM\nMakam: ' + currentScale + '\nYazim Tarzi: ' + (styleDescriptions[style] || style) + '\nDil: ' + (langDescriptions[lang] || lang) + '\n\nARANJE YAPISI:\n' + sections + '\n\nKURALLAR:\n- Her bolum icin [Intro], [Verse 1], [Chorus] gibi etiketleri kullan\n- Her bolum 2-4 satir icermeli\n- Kafiye yapisi ABAB veya AABB\n- Bölümler arasinda bos satir birak\n- Sadece sozleri yaz';
+
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+            body: JSON.stringify({ model: model, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }], max_tokens: 1200, temperature: 0.85 })
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err?.error?.message || ('HTTP ' + response.status));
+        }
+
+        const data = await response.json();
+        const lyrics = data.choices?.[0]?.message?.content?.trim();
+        if (!lyrics) throw new Error('AI yanit vermedi.');
+
+        const textarea = document.getElementById('customLyricsInput');
+        textarea.value = '';
+        let charIdx = 0;
+        const typeInterval = setInterval(() => {
+            textarea.value += lyrics[charIdx];
+            textarea.scrollTop = textarea.scrollHeight;
+            charIdx++;
+            if (charIdx >= lyrics.length) { clearInterval(typeInterval); generateSunoPrompt(); }
+        }, 10);
+
+    } catch (err) {
+        alert('AI Hatasi: ' + err.message + '\n\nAPI anahtarinizi ayar butonundan kontrol edin.');
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btnText.textContent = 'AI Soz Uret';
+        spinner.style.display = 'none';
+    }
+}
 // --- Suno AI Prompt Generator ---
 
 function generateSunoPrompt() {
@@ -3267,3 +3390,4 @@ window.addEventListener('load', () => {
         if (btnGen) btnGen.click();
     }
 });
+

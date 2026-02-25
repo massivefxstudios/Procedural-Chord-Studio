@@ -831,16 +831,44 @@
     <aside id="lyricsSidebar" class="lyrics-sidebar open">
         <div class="lyrics-sidebar-header">
             <h3>Şarkı Sözleri</h3>
-            <button id="btnCloseLyrics" class="icon-btn small-btn" style="color: #ff453a;"><svg width="14" height="14"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 6L6 18M6 6l12 12" />
-                </svg></button>
+            <div style="display:flex;gap:0.4rem;align-items:center;">
+                <button class="icon-btn small-btn ai-key-btn" onclick="openApiKeyModal()"
+                    title="OpenAI API Anahtarı Ayarla">⚙️</button>
+                <button id="btnCloseLyrics" class="icon-btn small-btn" style="color: #ff453a;"><svg width="14"
+                        height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                    </svg></button>
+            </div>
         </div>
-        <p class="description" style="margin-bottom: 1rem; font-size: 0.85rem;">Şarkı sözlerinizi buraya yapıştırın.
+        <p class="description" style="margin-bottom: 0.6rem; font-size: 0.85rem;">Şarkı sözlerinizi buraya yapıştırın.
             Sistem bu sözleri otomatik olarak Intro, Verse, Chorus gibi oluşturulan aranje dizilimine bölüp
             yerleştirecektir.</p>
+
+        <!-- AI Generate Button -->
+        <button id="btnAiLyrics" class="ai-lyrics-btn" onclick="generateLyricsWithAI()">
+            <span class="ai-btn-icon">🤖</span>
+            <span class="ai-btn-text">AI Söz Üret</span>
+            <span id="aiLyricsSpinner" class="ai-spinner" style="display:none;"></span>
+        </button>
+
+        <!-- AI Options Row -->
+        <div class="ai-options-row">
+            <select id="aiLyricLang" class="ai-opt-select" title="Dil Seç">
+                <option value="tr">🇹🇷 Türkçe</option>
+                <option value="en">🇬🇧 İngilizce</option>
+                <option value="mixed">🌐 Mix TR/EN</option>
+            </select>
+            <select id="aiLyricStyle" class="ai-opt-select" title="Yazı Tarzı">
+                <option value="poetic">Şiirsel</option>
+                <option value="emotional">Duygusal</option>
+                <option value="rap">Rap / Akıcı</option>
+                <option value="dark">Karanlık / Melankolik</option>
+                <option value="hopeful">Umutlu</option>
+            </select>
+        </div>
+
         <textarea id="customLyricsInput" placeholder="Satır boşluklarına dikkat ederek yapıştırın..."
-            style="width: 100%; height: calc(100% - 170px); background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px; font-family: inherit; resize: none; margin-bottom: 10px;">[Intro]
+            style="width: 100%; height: calc(100% - 235px); background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px; font-family: inherit; resize: none; margin-bottom: 10px;">[Intro]
 
 [Verse 1]
 
@@ -859,6 +887,40 @@
             🔍 Sözlere Göre Analiz Et
         </button>
     </aside>
+
+    <!-- OpenAI API Key Modal -->
+    <div id="apiKeyModal" class="api-modal-overlay" style="display:none;"
+        onclick="if(event.target===this)closeApiKeyModal()">
+        <div class="api-modal-box">
+            <div class="api-modal-header">
+                <h3>⚙️ OpenAI API Ayarları</h3>
+                <button class="icon-btn" onclick="closeApiKeyModal()" style="color:#ff453a;">✕</button>
+            </div>
+            <p class="api-modal-desc">API anahtarınız yalnızca tarayıcınızda yerel olarak saklanır, hiçbir sunucuya
+                gönderilmez.</p>
+            <div class="api-modal-row">
+                <label>🔑 OpenAI API Key</label>
+                <div class="api-key-input-wrap">
+                    <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off" spellcheck="false">
+                    <button class="icon-btn" id="btnToggleKeyVisibility" onclick="toggleKeyVisibility()"
+                        title="Göster/Gizle">👁</button>
+                </div>
+            </div>
+            <div class="api-modal-row">
+                <label>🧠 Model</label>
+                <select id="aiModelSelect">
+                    <option value="gpt-4o-mini">gpt-4o-mini (Hızlı &amp; Uygun)</option>
+                    <option value="gpt-4o">gpt-4o (Güçlü)</option>
+                    <option value="gpt-4-turbo">gpt-4-turbo</option>
+                </select>
+            </div>
+            <div class="api-modal-actions">
+                <button class="api-save-btn" onclick="saveApiKey()">✔ Kaydet</button>
+                <button class="api-clear-btn" onclick="clearApiKey()">🗑 Sil</button>
+            </div>
+            <div id="apiKeyStatus" class="api-key-status"></div>
+        </div>
+    </div>
 
     <script src="midi.js"></script>
     <script src="app.js"></script>
