@@ -1,0 +1,638 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "songName": "Eşik",
+    "artistName": "Leylazen",
+    "projectTag": "Single",
+    "savedAt": "2026-02-24T20:36:03.027Z"
+  },
+  "settings": {
+    "songDuration": "4",
+    "bpm": "150",
+    "genreSelect": "Dark Pop",
+    "moodSelect": "Melancholic, Emotional",
+    "scaleSelect": "D Phrygian (Kürdi)",
+    "keySelect": "D",
+    "tempoFeel": "Half-Time",
+    "synthPatchSelect": "pad",
+    "playbackStyleSelect": "chords",
+    "customLyricsInput": "[Verse 1]\nEşiğe geldim,\nadın ağır.\nGeçince büyür,\nben ufalırım.\n\nYük seçmem içim,\ngelir, oturur.\nDün tutundum ben,\nyarın kayarım.\n\nGözümde pus var,\nyüzün yakın.\nYaklaştıkça çoğalır,\nuzakça daralır.\n\n[Bridge]\nAğırsa sözün,\nüstüme koyma.\nBir bakış yeter,\niz olur, kalır.\nYüzünü çevir,\ngölgen değmesin.\nEşiğe gelince,\niçim dağılır.\n\n[Chorus]\nYok bende kıvılcım, karanlığında senin,\nDöner durur içim, daralır içimde benim.\nEşiğe gelince büyür içimde adın,\nGiderim derken bile, çekilir ardım.\n\n[Verse 2]\nBir işaret ararım,\ndili yok.\nBir boşluk büyür,\nadı yok.\n\nAdım atsam yer\ngeri çeker.\nYol değil bu sanki,\niçimden geçer.\n\nKapanmaz o çizik,\nince ince.\nDokunsan kanar,\ngörünmez biçimde.\n\nNe saklasam kalır,\niz gibi.\nAdın değince dağılır,\ndiz gibi.\n\n[Bridge]\nKopar içimde\nince teller.\nDüz anlatamam,\nyanar yerler.\nAdını anmasam da\ndurmaz içim.\nEşiğe her dönüşüm\naynı biçim.\n\n[Chorus]\nYok bende kıvılcım, karanlığında senin,\nDöner durur içim, daralır içimde benim.\nEşiğe gelince büyür içimde adın,\nGiderim derken bile, çekilir ardım.\n\n[Chorus]\nYok bende kıvılcım, karanlığında senin,\nDöner durur içim, daralır içimde benim.\nEşiğe gelince büyür içimde adın,\nGiderim derken bile, çekilir ardım.",
+    "instRhythm": "",
+    "instBass": "",
+    "instHarmony": "",
+    "instLead": "",
+    "instAtmosphere": "",
+    "negativeChips": [
+      "No excessive vocal belts, no screaming, no shouting, keep vocals smooth and controlled",
+      "No electronic instruments, no synthesizers, no artificial beats, purely acoustic, real instruments only",
+      "No lo-fi, no vinyl crackle, no hiss, no low quality mixing, pristine audio, high fidelity",
+      "No complex arrangements, no crowded mix, keep it minimal and sparse"
+    ]
+  },
+  "arrangement": [
+    {
+      "id": "sec_7309hfb32",
+      "type": "intro",
+      "name": "Giriş (Intro)",
+      "duration": 4,
+      "chords": [
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "6ccdvtv33"
+        },
+        {
+          "baseName": "D",
+          "originalBaseName": "D",
+          "name": "Eb",
+          "repeats": 1,
+          "id": "oerylz7sg"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "9m94n70jh"
+        },
+        {
+          "baseName": "D",
+          "originalBaseName": "D",
+          "name": "Eb",
+          "repeats": 1,
+          "id": "v09ibukkn"
+        }
+      ],
+      "vocalStyle": "Pop / Melodic",
+      "vocalGender": "Kadın (Female)"
+    },
+    {
+      "id": "sec_cj2nb5ppq",
+      "type": "verse",
+      "name": "Söz (Verse)",
+      "duration": 8,
+      "chords": [
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "z39ak6ujo"
+        },
+        {
+          "baseName": "Bm",
+          "originalBaseName": "Bm",
+          "name": "Cm",
+          "repeats": 1,
+          "id": "6dwui6vu1"
+        },
+        {
+          "baseName": "A",
+          "originalBaseName": "A",
+          "name": "Bb",
+          "repeats": 1,
+          "id": "qzkj7fi0h"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "73vr3s56a"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "fgivt4y6h"
+        },
+        {
+          "baseName": "Bm",
+          "originalBaseName": "Bm",
+          "name": "Cm",
+          "repeats": 1,
+          "id": "a14vp47o6"
+        },
+        {
+          "baseName": "A",
+          "originalBaseName": "A",
+          "name": "Bb",
+          "repeats": 1,
+          "id": "xr8bpi5rm"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "3rbeqdfi7"
+        }
+      ],
+      "vocalStyle": "Pop / Melodic",
+      "vocalGender": "Kadın (Female)"
+    },
+    {
+      "id": "sec_wdep9nzs1",
+      "type": "bridge",
+      "name": "Köprü (Bridge)",
+      "duration": 8,
+      "chords": [
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "98y56nhjo"
+        },
+        {
+          "baseName": "C#",
+          "originalBaseName": "C#",
+          "name": "D",
+          "repeats": 1,
+          "id": "pno6l99ds"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "vg4crnryh"
+        },
+        {
+          "baseName": "E",
+          "originalBaseName": "E",
+          "name": "F",
+          "repeats": 1,
+          "id": "895hlav5g"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "6p4zx50h5"
+        },
+        {
+          "baseName": "C#",
+          "originalBaseName": "C#",
+          "name": "D",
+          "repeats": 1,
+          "id": "llwl99azz"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "zyfqf31ey"
+        },
+        {
+          "baseName": "E",
+          "originalBaseName": "E",
+          "name": "F",
+          "repeats": 1,
+          "id": "qf2f5qb1w"
+        }
+      ],
+      "vocalStyle": "Pop / Melodic",
+      "vocalGender": "Kadın (Female)"
+    },
+    {
+      "id": "sec_d7v6lq41a",
+      "type": "chorus",
+      "name": "Nakarat (Chorus)",
+      "duration": 8,
+      "chords": [
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "ifrf37gky"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "9p27xwzlq"
+        },
+        {
+          "baseName": "D",
+          "originalBaseName": "D",
+          "name": "Eb",
+          "repeats": 1,
+          "id": "5gsfok6ff"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "uo7p2uz8k"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "mth15ptrk"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "n9s6oo92f"
+        },
+        {
+          "baseName": "D",
+          "originalBaseName": "D",
+          "name": "Eb",
+          "repeats": 1,
+          "id": "6ynmxf2nw"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "jrihu8v7a"
+        }
+      ],
+      "vocalStyle": "Pop / Melodic",
+      "vocalGender": "Kadın (Female)"
+    },
+    {
+      "id": "sec_vax5d6tqe",
+      "type": "verse",
+      "name": "Söz (Verse)",
+      "duration": 8,
+      "chords": [
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "txxz0f7dv"
+        },
+        {
+          "baseName": "Bm",
+          "originalBaseName": "Bm",
+          "name": "Cm",
+          "repeats": 1,
+          "id": "alf8mlj26"
+        },
+        {
+          "baseName": "A",
+          "originalBaseName": "A",
+          "name": "Bb",
+          "repeats": 1,
+          "id": "6wxttx9ku"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "ohp1k26fb"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "1eqsaabty"
+        },
+        {
+          "baseName": "Bm",
+          "originalBaseName": "Bm",
+          "name": "Cm",
+          "repeats": 1,
+          "id": "ffcp504ew"
+        },
+        {
+          "baseName": "A",
+          "originalBaseName": "A",
+          "name": "Bb",
+          "repeats": 1,
+          "id": "4a2o3au13"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "x0gogn1fi"
+        }
+      ],
+      "vocalStyle": "Pop / Melodic",
+      "vocalGender": "Kadın (Female)"
+    },
+    {
+      "id": "sec_101jqyw8h",
+      "type": "bridge",
+      "name": "Köprü (Bridge)",
+      "duration": 8,
+      "chords": [
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "rmbym816q"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "s9gfqi8hc"
+        },
+        {
+          "baseName": "D",
+          "originalBaseName": "D",
+          "name": "Eb",
+          "repeats": 1,
+          "id": "xow4g6pvi"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "u590vnj9k"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "j5pmg158o"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "syvwslgqp"
+        },
+        {
+          "baseName": "D",
+          "originalBaseName": "D",
+          "name": "Eb",
+          "repeats": 1,
+          "id": "oiudqv89j"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "78p39wrl3"
+        }
+      ],
+      "vocalStyle": "Pop / Melodic",
+      "vocalGender": "Kadın (Female)"
+    },
+    {
+      "id": "sec_vv664ubpb",
+      "type": "bridge",
+      "name": "Köprü (Bridge)",
+      "duration": 8,
+      "chords": [
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "dfm7ib4pl"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "xug3t4a4p"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "stei5br4c"
+        },
+        {
+          "baseName": "A",
+          "originalBaseName": "A",
+          "name": "Bb",
+          "repeats": 1,
+          "id": "wvy5805cx"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "9nhc2g4z3"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "8tcogld1h"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "k97dz9oa5"
+        },
+        {
+          "baseName": "A",
+          "originalBaseName": "A",
+          "name": "Bb",
+          "repeats": 1,
+          "id": "w3vrn9msc"
+        }
+      ],
+      "vocalStyle": "Pop / Melodic",
+      "vocalGender": "Kadın (Female)"
+    },
+    {
+      "id": "sec_pta6uzoe4",
+      "type": "chorus",
+      "name": "Nakarat (Chorus)",
+      "duration": 8,
+      "chords": [
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "0jegmzamd"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "y65xj81e7"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "nkxn2feyt"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "jocwhv1ln"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "zinsfpiwa"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "ppyt234x1"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "rngowmzig"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "0a4mt43xa"
+        }
+      ],
+      "vocalStyle": "Pop / Melodic",
+      "vocalGender": "Kadın (Female)"
+    },
+    {
+      "id": "sec_08u9re5ca",
+      "type": "chorus",
+      "name": "Nakarat (Chorus)",
+      "duration": 8,
+      "chords": [
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "gt7c0r0c8"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "fs5ssyl8r"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "lgcxgcor4"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "556cakbi5"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "gsv5cvdhg"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "9jctbula4"
+        },
+        {
+          "baseName": "F#m",
+          "originalBaseName": "F#m",
+          "name": "Gm",
+          "repeats": 1,
+          "id": "qelqc40n7"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "jy8wyrqfj"
+        }
+      ],
+      "vocalStyle": "Pop / Melodic",
+      "vocalGender": "Kadın (Female)"
+    },
+    {
+      "id": "sec_xtj93omjs",
+      "type": "outro",
+      "name": "Çıkış (Outro)",
+      "duration": 4,
+      "chords": [
+        {
+          "baseName": "A",
+          "originalBaseName": "A",
+          "name": "Bb",
+          "repeats": 1,
+          "id": "op6hq6muo"
+        },
+        {
+          "baseName": "G#",
+          "originalBaseName": "G#",
+          "name": "A",
+          "repeats": 1,
+          "id": "yd960757o"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "xilrd4ce6"
+        },
+        {
+          "baseName": "C#m",
+          "originalBaseName": "C#m",
+          "name": "Dm",
+          "repeats": 1,
+          "id": "vy4el5sir"
+        }
+      ],
+      "vocalStyle": "Pop / Melodic",
+      "vocalGender": "Kadın (Female)"
+    }
+  ]
+}

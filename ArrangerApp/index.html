@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROCEDURAL - CHORD CREATE STUDIO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Persona Library Left Sidebar -->
+    <aside id="personaSidebar" class="persona-sidebar">
+        <div class="sidebar-header">
+            <h3>🎭 Persona Kütüphanesi</h3>
+            <button class="icon-btn" onclick="togglePersonaSidebar()" title="Kapat">✕</button>
+        </div>
+        <div class="sidebar-content">
+            <p class="persona-sidebar-desc">Bir persona seç — özellikleri incele ve promta ekle.</p>
+
+            <!-- Dynamic Persona Button Grid (rendered by JS) -->
+            <div id="personaBtnGrid" class="persona-btn-grid"></div>
+
+            <!-- Detail / Preview Panel -->
+            <div id="personaDetailPanel" class="persona-detail-panel" style="display:none;">
+                <div class="persona-detail-header">
+                    <div id="personaDetailAvatar" class="persona-detail-avatar"></div>
+                    <div>
+                        <h4 id="personaDetailName"></h4>
+                        <span id="personaDetailGenderTag" class="persona-gender-tag"></span>
+                    </div>
+                </div>
+                <div class="persona-detail-body">
+                    <div class="persona-detail-row">
+                        <span class="detail-label">🎤 Vokal Tarzı</span>
+                        <span id="personaDetailStyle" class="detail-value"></span>
+                    </div>
+                    <div class="persona-detail-row">
+                        <span class="detail-label">🎵 Etiketler</span>
+                        <span id="personaDetailTags" class="detail-value"></span>
+                    </div>
+                    <div class="persona-detail-row">
+                        <span class="detail-label">⚡ Suno Stili</span>
+                        <span id="personaDetailSuno" class="detail-value detail-suno"></span>
+                    </div>
+                </div>
+                <div class="persona-detail-actions">
+                    <button class="persona-apply-btn" onclick="applyPersona()">✔ Uygula</button>
+                    <button class="persona-edit-inline-btn" onclick="openPersonaEditor(previewingPersona)">✏
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Düzenle</button>
+                    <button class="persona-cancel-btn" onclick="clearPersonaPreview()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg> İptal</button>
+                </div>
+            </div>
+
+            <!-- Inline Edit / New Persona Form -->
+            <div id="personaEditPanel" class="persona-edit-panel" style="display:none;">
+                <h4 id="personaEditTitle" class="persona-edit-title">✏ Persona Düzenle</h4>
+                <input type="hidden" id="peditId">
+
+                <div class="pedit-row">
+                    <label>Persona ID (tekil, boşluksuz)</label>
+                    <input type="text" id="peditIdName" placeholder="Örn: Leylazen">
+                </div>
+                <div class="pedit-row">
+                    <label>Görünen İsim</label>
+                    <input type="text" id="peditName" placeholder="Örn: Leylazen">
+                </div>
+                <div class="pedit-row">
+                    <label>Avatar Harfi</label>
+                    <input type="text" id="peditLetter" maxlength="2" placeholder="L">
+                </div>
+                <div class="pedit-row">
+                    <label>Avatar Renk 1 (hex)</label>
+                    <input type="color" id="peditColor1" value="#d845ff">
+                </div>
+                <div class="pedit-row">
+                    <label>Avatar Renk 2 (hex)</label>
+                    <input type="color" id="peditColor2" value="#8a2be2">
+                </div>
+                <div class="pedit-row">
+                    <label>Cinsiyet Etiketi (TR)</label>
+                    <input type="text" id="peditGender" placeholder="Kadin Vokal / Erkek Vokal">
+                </div>
+                <div class="pedit-row">
+                    <label>Cinsiyet Kodu (EN prompt)</label>
+                    <input type="text" id="peditGenderCode" placeholder="Female V. / Male Rap V.">
+                </div>
+                <div class="pedit-row">
+                    <label>Stil Özeti</label>
+                    <input type="text" id="peditStyle" placeholder="Ethereal, Melancholic, ...">
+                </div>
+                <div class="pedit-row">
+                    <label>Etiketler</label>
+                    <input type="text" id="peditTags" placeholder="Kadin Vokal, Ethereal, ...">
+                </div>
+                <div class="pedit-row">
+                    <label>⚡ Suno Style Metni (tam prompt)</label>
+                    <textarea id="peditSuno" rows="5"
+                        placeholder="Suno'ya girilecek detaylı stil açıklaması..."></textarea>
+                </div>
+
+                <details class="pedit-section">
+                    <summary>⚙ Genel Ayar Presetleri</summary>
+                    <div class="pedit-row"><label>BPM</label><input type="number" id="peditBpm" min="60" max="200"
+                            placeholder="140"></div>
+                    <div class="pedit-row"><label>Genre (değer)</label><input type="text" id="peditGenre"
+                            placeholder="Arabesque Trap"></div>
+                    <div class="pedit-row"><label>Mood (değer)</label><input type="text" id="peditMood"
+                            placeholder="Aggressive, Dark, Deep bass"></div>
+                    <div class="pedit-row"><label>Scale (değer)</label><input type="text" id="peditScale"
+                            placeholder="C# Phrygian Dominant (Hicaz)"></div>
+                    <div class="pedit-row"><label>Key</label><input type="text" id="peditKey" placeholder="C#"></div>
+                    <div class="pedit-row"><label>Tempo Feel</label>
+                        <select id="peditTempoFeel">
+                            <option value="Normal">Normal</option>
+                            <option value="Half-Time">Half-Time</option>
+                            <option value="Double-Time">Double-Time</option>
+                        </select>
+                    </div>
+                    <div class="pedit-row"><label>Ritim Enstrüman</label><input type="text" id="peditInstRhythm"
+                            placeholder="808 Trap Drums"></div>
+                    <div class="pedit-row"><label>Bas Enstrüman</label><input type="text" id="peditInstBass"
+                            placeholder="808 Sub Bass"></div>
+                    <div class="pedit-row"><label>Armoni Enstrüman</label><input type="text" id="peditInstHarmony">
+                    </div>
+                    <div class="pedit-row"><label>Lead/Melodi</label><input type="text" id="peditInstLead"
+                            placeholder="Ney Flute"></div>
+                    <div class="pedit-row"><label>Atmosfer</label><input type="text" id="peditInstAtmosphere"
+                            placeholder="Dark Ambient Drone"></div>
+                    <div class="pedit-row"><label>Vokal Cinsiyet Dropdown</label><input type="text"
+                            id="peditVocalGender" placeholder="duo / Kadın / Erkek / Koro / inst"></div>
+                </details>
+
+                <div class="pedit-actions">
+                    <button class="persona-apply-btn" onclick="savePersonaEdit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Kaydet</button>
+                    <button class="persona-delete-btn" id="peditDeleteBtn" onclick="deletePersona()"
+                        style="display:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Sil</button>
+                    <button class="persona-cancel-btn" onclick="closePersonaEditor()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg> İptal</button>
+                </div>
+            </div>
+
+            <!-- Active Persona Chip -->
+            <div id="activePersonaChip" class="active-persona-chip" style="display:none;">
+                <span>✓ Aktif: <strong id="activePersonaName"></strong></span>
+                <button onclick="selectPersona(null)">✕ Kaldır</button>
+            </div>
+
+            <!-- New Persona Button -->
+            <button class="persona-new-btn" onclick="openPersonaEditor(null)">＋ Yeni Persona</button>
+        </div>
+    </aside>
+
+    <!-- Global Floating Toggle Button for Persona Panel -->
+    <button id="btnTogglePersona" class="primary-btn floating-toggle-left" onclick="togglePersonaSidebar()">
+        🎭 Personalar
+    </button>
+
+    <!-- Full-Page Edge Visualizer Canvas -->
+    <canvas id="visualizerCanvas"></canvas>
+
+    <header>
+        <div class="logo">
+            <h1>PROCEDURAL<span style="color: var(--primary); font-weight: 300;"> — CHORD CREATE STUDIO</span></h1>
+            <span class="subtitle">Arrangement & Chord Studio</span>
+        </div>
+        <div class="project-controls">
+            <button class="icon-btn" onclick="openSaveModal()" title="Projeyi Kaydet"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Kaydet</button>
+            <button class="icon-btn" onclick="document.getElementById('loadFileInput').click()" title="Proje Aç"
+                style="border-color: rgba(255,159,10,0.5); color: #ff9f0a;">📂 Aç</button>
+            <input type="file" id="loadFileInput" accept=".pcs,.json" style="display:none"
+                onchange="loadProject(event)">
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Settings Panel -->
+        <section class="panel settings-panel">
+            <h2>Genel Ayarlar</h2>
+            <div class="input-group">
+                <label for="songDuration">Hedef Şarkı Süresi (Dakika):</label>
+                <input type="number" id="songDuration" min="1" max="10" step="0.5" value="3.0">
+            </div>
+            <div class="input-group">
+                <label for="bpm">Tempo (BPM):</label>
+                <input type="number" id="bpm" min="60" max="180" step="1" value="95">
+            </div>
+            <div class="input-group">
+                <label for="octaveSelect">Oktav (Eserin Yüksekliği):</label>
+                <select id="octaveSelect">
+                    <option value="2">+2 Oktav (Çok Tiz)</option>
+                    <option value="1">+1 Oktav (Tiz)</option>
+                    <option value="0" selected>Orijinal (0 Oktav)</option>
+                    <option value="-1">-1 Oktav (Pes)</option>
+                    <option value="-2">-2 Oktav (Çok Pes)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="tempoFeel">Tempo Hissiyatı:</label>
+                <select id="tempoFeel">
+                    <option value="Normal">Normal</option>
+                    <option value="Half-Time">Half-Time (Yarı Zamanlı / Yavaş)</option>
+                    <option value="Double-Time">Double-Time (Çift Zamanlı / Hızlı)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="keySelect">Tonalite (Key Signature):</label>
+                <select id="keySelect">
+                    <option value="C">C</option>
+                    <option value="C#" selected>C#</option>
+                    <option value="D">D</option>
+                    <option value="D#">D#</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="F#">F#</option>
+                    <option value="G">G</option>
+                    <option value="G#">G#</option>
+                    <option value="A">A</option>
+                    <option value="A#">A#</option>
+                    <option value="B">B</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="scaleSelect">Makam / Dizi (Scale):</label>
+                <select id="scaleSelect">
+                    <option value="Varsayılan (Standart Akorlar)">Varsayılan (Standart Akorlar)</option>
+                    <option value="C# Harmonic Minor">C# Harmonic Minor</option>
+                    <option value="C# Phrygian Dominant (Hicaz)">C# Phrygian Dominant (Hicaz)</option>
+                    <option value="A Minor (Nihavend)">A Minor (Nihavend / Pop)</option>
+                    <option value="D Phrygian (Kürdi)">D Phrygian (Kürdi)</option>
+                    <option value="C# Double Harmonic (Kürdi)">C# Double Harmonic (Kürdi)</option>
+                    <option value="C# Dorian (Hüseyni)">C# Dorian (Hüseyni)</option>
+                    <option value="C# Mixolydian (Rast)">C# Mixolydian (Rast)</option>
+                    <option value="C# Phrygian (Uşşak)">C# Phrygian (Uşşak)</option>
+                    <option value="C# Lydian (Çargah)">C# Lydian (Çargah)</option>
+                    <option value="C# Locrian (Sabâ)">C# Locrian (Sabâ)</option>
+                    <option value="C# Major">C# Major</option>
+                    <option value="C# Melodic Minor">C# Melodic Minor</option>
+                    <option value="C# Harmonic Major">C# Harmonic Major</option>
+                    <option value="C# Dorian #4 (Nihavend)">C# Dorian #4 (Nihavend)</option>
+                    <option value="C# Lydian Dominant">C# Lydian Dominant</option>
+                    <option value="C# Super Locrian (Altered)">C# Super Locrian (Altered)</option>
+                    <option value="C# Neapolitan Minor">C# Neapolitan Minor</option>
+                    <option value="C# Neapolitan Major">C# Neapolitan Major</option>
+                    <option value="C# Hungarian Minor">C# Hungarian Minor</option>
+                    <option value="C# Hungarian Major">C# Hungarian Major</option>
+                    <option value="C# Enigmatic">C# Enigmatic</option>
+                    <option value="C# Hirajoshi">C# Hirajoshi</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="genreSelect">Müzik Türü (Genre):</label>
+                <select id="genreSelect">
+                    <option value="Turkish Pop">Turkish Pop</option>
+                    <option value="Dark Pop">Dark Pop</option>
+                    <option value="Arabesque Trap">Arabesque Trap</option>
+                    <option value="Cinematic">Cinematic</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="moodSelect">Atmosfer (Mood):</label>
+                <select id="moodSelect">
+                    <option value="Melancholic, Emotional">Melancholik & Duygusal</option>
+                    <option value="Aggressive, Dark, Deep bass">Agresif & Karanlık</option>
+                    <option value="Epic, Orchestral, Grand">Epik & Orkestral</option>
+                    <option value="Mysterious, Glassy synths">Gizemli</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Instruments Panel -->
+        <section class="panel instruments-panel">
+            <h2>Enstrüman Katmanları</h2>
+            <p class="description">Özel ses tasarımınız için kullanılacak enstrümanları katman bazında seçin. Boş
+                bırakılanlar türe göre otomatik seçilir.</p>
+            <div class="layer-grid">
+                <div class="input-group">
+                    <label for="instRhythm">Ritim (Drums/Percussion):</label>
+                    <select id="instRhythm">
+                        <option value="">Otomatik (Türüne Göre)</option>
+                        <option value="Acoustic Drums">Akustik Bateri</option>
+                        <option value="808 Trap Drums">808 (Trap Davulları)</option>
+                        <option value="Lo-Fi Drum Break">Lo-Fi Breakbeat</option>
+                        <option value="Cinematic Percussion">Sinematik Vurmalılar</option>
+                        <option value="Darabuka and Req">Darbuka & Def</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="instBass">Bas (Low End):</label>
+                    <select id="instBass">
+                        <option value="">Otomatik (Türüne Göre)</option>
+                        <option value="Synth Bass">Synth Bass</option>
+                        <option value="808 Sub Bass">808 Sub</option>
+                        <option value="Electric Bass">Elektro Bas (Fingered)</option>
+                        <option value="Upright Bass">Kontrbas</option>
+                        <option value="Reese Bass">Reese Bass</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="instHarmony">Armoni (Gitar/Tuşlu):</label>
+                    <select id="instHarmony">
+                        <option value="">Otomatik (Türüne Göre)</option>
+                        <option value="Grand Piano">Kuyruklu Piyano</option>
+                        <option value="Electric Piano">Rhodes E.Piyano</option>
+                        <option value="Acoustic Guitar">Akustik Gitar</option>
+                        <option value="Clean Electric Guitar">Clean Elektro Gitar</option>
+                        <option value="Analog Synth Pad">Analog Synth Pad</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="instLead">Melodi (Lead):</label>
+                    <select id="instLead">
+                        <option value="">Otomatik (Türüne Göre)</option>
+                        <option value="Vocal Chops">Vocal Chops</option>
+                        <option value="Distorted Electric Guitar">Meydan Okuyan E.Gitar</option>
+                        <option value="Ney Flute">Ney Flüt</option>
+                        <option value="Pluck Synth">Pluck Synth</option>
+                        <option value="Violin Solo">Keman Solo</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="instAtmosphere">Atmosfer (Atmosphere):</label>
+                    <select id="instAtmosphere">
+                        <option value="">Otomatik (Türüne Göre)</option>
+                        <option value="Epic Strings">Epic Strings (Yaylılar)</option>
+                        <option value="Ethereal Choir">Ethereal Choir (Koro)</option>
+                        <option value="Dark Ambient Drone">Dark Drone</option>
+                        <option value="Vinyl Crackle Noise">Vinyl Crackle (Plak Çıtırtısı)</option>
+                        <option value="Brass Section">Brass Section (Üflemeliler)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="btnGenerateStructure" class="primary-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13M9 9l12-2"/><circle cx="6" cy="18" r="3"/><circle cx="21" cy="16" r="3"/></svg> Aranje Oluştur</button>
+        </section>
+
+        <!-- Song Analysis Panel -->
+        <section class="panel analysis-panel" style="margin-bottom: 2rem;">
+            <h2>Şarkı Akor Analizi</h2>
+            <p class="description">İstediğiniz bir şarkının YouTube linkini girin. Sistem şarkıyı indirecek ve makine
+                öğrenimi modeli ile (librosa) saniye saniye akorlarını çıkartacaktır. Bu işlem ortalama 15-30 saniye
+                sürebilir.</p>
+            <div class="input-group">
+                <input type="text" id="songAnalysisUrl" placeholder="https://www.youtube.com/watch?v=..."
+                    style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.4); color: white; font-family: 'Outfit';">
+            </div>
+            <button id="btnAnalyzeSong" class="secondary-btn"
+                style="background: rgba(138,43,226,0.3); border-color: rgba(138,43,226,0.6);" onclick="analyzeSong()">🔍
+                Şarkı Analizi Yap</button>
+            <div id="analysisLoading" style="display: none; color: #ff9f0a; font-weight: 600; margin-top: 15px;">⏳ Şarkı
+                indiriliyor ve analiz ediliyor... Lütfen bekleyin.</div>
+            <div class="input-group" style="margin-top: 20px;">
+                <textarea id="songAnalysisResult" rows="6" readonly
+                    placeholder="Analiz edilen akorlar burada görünecek..."
+                    style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px; font-family: inherit; resize: vertical; display: none;"></textarea>
+            </div>
+        </section>
+
+        <!-- Arrangement Timeline -->
+        <section id="timelineSection" class="panel timeline-panel" style="display: none;">
+            <div class="panel-header">
+                <h2>Aranje Dizilimi</h2>
+                <div class="actions" style="display:flex; flex-direction:column; gap: 10px; align-items:flex-end;">
+                    <!-- Global Makam Controls -->
+                    <div class="input-group" style="display:inline-block; margin-bottom: 0;">
+                        <span style="color:var(--text-muted); font-size:0.85rem; margin-right:5px;">Tümü İçin
+                            Makam:</span>
+                        <select id="timelineScaleSelect"
+                            style="padding: 0.4rem; background: rgba(0,0,0,0.5); font-size: 0.85rem; border-color: var(--primary); color: #fff;">
+                            <option value="Varsayılan (Standart Akorlar)">Varsayılan (Standart Akorlar)</option>
+                            <option value="C# Harmonic Minor">C# Harmonic Minor</option>
+                            <option value="C# Phrygian Dominant (Hicaz)">C# Phrygian Dominant (Hicaz)</option>
+                            <option value="A Minor (Nihavend)">A Minor (Nihavend / Pop)</option>
+                            <option value="D Phrygian (Kürdi)">D Phrygian (Kürdi)</option>
+                            <option value="C# Double Harmonic (Kürdi)">C# Double Harmonic (Kürdi)</option>
+                            <option value="C# Dorian (Hüseyni)">C# Dorian (Hüseyni)</option>
+                            <option value="C# Mixolydian (Rast)">C# Mixolydian (Rast)</option>
+                            <option value="C# Phrygian (Uşşak)">C# Phrygian (Uşşak)</option>
+                            <option value="C# Lydian (Çargah)">C# Lydian (Çargah)</option>
+                            <option value="C# Locrian (Sabâ)">C# Locrian (Sabâ)</option>
+                            <option value="C# Major">C# Major</option>
+                            <option value="C# Melodic Minor">C# Melodic Minor</option>
+                            <option value="C# Harmonic Major">C# Harmonic Major</option>
+                            <option value="C# Dorian #4 (Nihavend)">C# Dorian #4 (Nihavend)</option>
+                            <option value="C# Lydian Dominant">C# Lydian Dominant</option>
+                            <option value="C# Super Locrian (Altered)">C# Super Locrian (Altered)</option>
+                            <option value="C# Neapolitan Minor">C# Neapolitan Minor</option>
+                            <option value="C# Neapolitan Major">C# Neapolitan Major</option>
+                            <option value="C# Hungarian Minor">C# Hungarian Minor</option>
+                            <option value="C# Hungarian Major">C# Hungarian Major</option>
+                            <option value="C# Enigmatic">C# Enigmatic</option>
+                            <option value="C# Hirajoshi">C# Hirajoshi</option>
+                        </select>
+                        <button id="btnApplyTimelineScale" class="icon-btn"
+                            style="border-color:var(--primary); color:white;" title="Tüm bölümlerin makamını değiştir">✨
+                            Uygula</button>
+                    </div>
+
+                    <!-- Global Vocal Controls -->
+                    <div class="input-group" style="display:inline-block; margin-bottom: 0;">
+                        <span style="color:var(--text-muted); font-size:0.85rem; margin-right:5px;">Tümü İçin
+                            Vokal:</span>
+                        <select id="globalVocalStyle" class="vocal-select"
+                            style="background: rgba(138,43,226,0.3); color: white;">
+                            <option value="">-- Tarz Seç --</option>
+                            <option value="Pop / Melodic">Pop / Melodic</option>
+                            <option value="Rap / Trap">Rap / Trap</option>
+                            <option value="R&B / Soul">R&B / Soul</option>
+                            <option value="Rock / Aggressive">Rock / Aggressive</option>
+                            <option value="Enstrümantal">Enstrümantal</option>
+                        </select>
+                        <select id="globalVocalGender" class="vocal-select"
+                            style="background: rgba(138,43,226,0.3); color: white;">
+                            <option value="">-- Cinsiyet Seç --</option>
+                            <option value="Erkek (Male)">Erkek (Male)</option>
+                            <option value="Kadın (Female)">Kadın (Female)</option>
+                            <option value="Koro/Çoklu (Choir)">Koro/Çoklu (Choir)</option>
+                            <option value="Düet (Duet)">Düet (Duet)</option>
+                            <option value="Vokal Yok">Vokal Yok</option>
+                        </select>
+                        <button id="btnApplyGlobalVocal" class="icon-btn"
+                            style="border-color:var(--primary); color:white;" title="Tüm bölümlere uygula">✨
+                            Uygula</button>
+                    </div>
+
+                    <!-- Playback Controls -->
+                    <div>
+                        <div class="input-group" style="display:inline-block; margin-right: 15px; margin-bottom: 0;">
+                            <select id="synthPatchSelect"
+                                style="padding: 0.4rem; background: rgba(0,0,0,0.5); font-size: 0.85rem; border-color: var(--primary); color: #fff;">
+                                <option value="pad">🎶 Synth Pad (Yumuşak)</option>
+                                <option value="ethereal_pad">🌌 Uzay Pad (Yoğun Yankı)</option>
+                                <option value="keys">🎹 Keys (Piyano/EP)</option>
+                                <option value="pluck">🎸 Pluck Synth (Kısa Vuruş)</option>
+                                <option value="synth_brass">🎺 Synth Brass (Güçlü)</option>
+                                <option value="bass">🔊 Sub Bass (Derin)</option>
+                                <option value="sad_flute">🌾 Acıklı Flüt (Tiz & Duygusal)</option>
+                            </select>
+                            <select id="playbackStyleSelect"
+                                style="padding: 0.4rem; background: rgba(0,0,0,0.5); font-size: 0.85rem; border-color: #ff9f0a; color: #ffb340; margin-left: 10px;">
+                                <option value="chords">🎼 Blok Akorlar (Sustained)</option>
+                                <option value="arpeggio">🎵 Basit Arpej (Aşağı/Yukarı)</option>
+                                <option value="arpeggio_fast">⚡ Hızlı Yükselen (16'lık)</option>
+                                <option value="arpeggio_updown_fast">🚀 Çift Yönlü Arpej (16'lık)</option>
+                                <option value="random_arp">🎲 Rastgele Sıçramalı Arpej</option>
+                                <option value="chord_pulse">💓 Akor Nabzı (8'lik Vuruşlar)</option>
+                                <option value="rhythmic_chop">🔪 Ritmik Kesik (Syncopated)</option>
+                                <option value="waltz_feel">💃 Vals Ritmi (3/4 Hissiyatı)</option>
+                            </select>
+                        </div>
+                        <button id="btnPlayAll" class="icon-btn" title="Tümünü Çal"><svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><polygon points='5 3 19 12 5 21 5 3'/></svg> Çal</button>
+                        <button id="btnStop" class="icon-btn" title="Durdur"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12"/></svg> Durdur</button>
+                        <button id="btnExportBaseMIDI" class="icon-btn" title="MIDI İndir"><svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4'/><polyline points='7 10 12 15 17 10'/><line x1='12' y1='15' x2='12' y2='3'/></svg> MIDI İndir</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="timelineContainer" class="timeline">
+                <!-- Sections will be injected here -->
+            </div>
+
+            <div class="timeline-actions" style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;">
+                <button id="btnAddSection" class="secondary-btn" style="margin-bottom: 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Yeni Bölüm Ekle</button>
+                <button id="btnClearTimeline" class="secondary-btn"
+                    style="background: rgba(255,69,58,0.2); border-color: rgba(255,69,58,0.5); color: #ff453a; margin-bottom: 0;"><svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><polyline points='3 6 5 6 21 6'/><path d='M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2'/></svg> Temizle</button>
+            </div>
+        </section>
+
+        <!-- Suno AI Prompt Generator -->
+        <section class="panel prompt-panel">
+            <h2>✨ Suno AI Prompt Üretici</h2>
+            <p class="description">Aranje yapısından Suno AI için optimize Style + Lyrics promptu üretir.</p>
+
+            <!-- ═══ STYLE CHIP ADDER ══════════════════════════════════════════ -->
+            <div class="style-chip-panel">
+                <div class="style-chip-header">
+                    <span class="style-chip-title">⚡ Style Tag Ekle</span>
+                    <span class="style-chip-hint">Chip'e tıkla → Style kutusuna eklenir</span>
+                </div>
+
+                <!-- POP / MAINSTREAM -->
+                <div class="style-chip-row">
+                    <span class="style-cat-label cat-pop">🎤 Ana Akım</span>
+                    <div class="style-chips cat-pop-chips">
+                        <button class="style-chip spop" data-style="Pop">Pop</button>
+                        <button class="style-chip spop" data-style="Indie Pop">Indie Pop</button>
+                        <button class="style-chip spop" data-style="Synth Pop">Synth Pop</button>
+                        <button class="style-chip spop" data-style="Dance Pop">Dance Pop</button>
+                        <button class="style-chip spop" data-style="Turkish Pop">Turkish Pop</button>
+                        <button class="style-chip spop" data-style="K-Pop">K-Pop</button>
+                        <button class="style-chip spop" data-style="Electropop">Electropop</button>
+                        <button class="style-chip spop" data-style="Dream Pop">Dream Pop</button>
+                    </div>
+                </div>
+
+                <!-- HIP-HOP / RAP -->
+                <div class="style-chip-row">
+                    <span class="style-cat-label cat-rap">🎧 Hip-Hop</span>
+                    <div class="style-chips cat-rap-chips">
+                        <button class="style-chipstrap" data-style="Trap">Trap</button>
+                        <button class="style-chipstrap" data-style="Rap">Rap</button>
+                        <button class="style-chipstrap" data-style="Drill">Drill</button>
+                        <button class="style-chipstrap" data-style="Boom Bap">Boom Bap</button>
+                        <button class="style-chipstrap" data-style="Lo-Fi Hip-Hop">Lo-Fi Hip-Hop</button>
+                        <button class="style-chipstrap" data-style="Phonk">Phonk</button>
+                        <button class="style-chipstrap" data-style="Melodic Rap">Melodic Rap</button>
+                        <button class="style-chipstrap" data-style="Dark Trap">Dark Trap</button>
+                    </div>
+                </div>
+
+                <!-- R&B / SOUL -->
+                <div class="style-chip-row">
+                    <span class="style-cat-label cat-rnb">🎵 R&amp;B / Soul</span>
+                    <div class="style-chips cat-rnb-chips">
+                        <button class="style-chip srnb" data-style="R&amp;B">R&amp;B</button>
+                        <button class="style-chip srnb" data-style="Neo-Soul">Neo-Soul</button>
+                        <button class="style-chip srnb" data-style="Soul">Soul</button>
+                        <button class="style-chip srnb" data-style="Alt R&amp;B">Alt R&amp;B</button>
+                        <button class="style-chip srnb" data-style="Funk">Funk</button>
+                        <button class="style-chip srnb" data-style="Gospel">Gospel</button>
+                    </div>
+                </div>
+
+                <!-- ETHNIC / WORLD -->
+                <div class="style-chip-row">
+                    <span class="style-cat-label cat-ethnic">🌍 Etnik / World</span>
+                    <div class="style-chips cat-ethnic-chips">
+                        <button class="style-chip sethnic" data-style="Turkish Folk">Turkish Folk</button>
+                        <button class="style-chip sethnic" data-style="Arabesque">Arabesque</button>
+                        <button class="style-chip sethnic" data-style="Oriental">Oriental</button>
+                        <button class="style-chip sethnic" data-style="Anatolian Rock">Anatolian Rock</button>
+                        <button class="style-chip sethnic" data-style="Flamenco">Flamenco</button>
+                        <button class="style-chip sethnic" data-style="Afrobeats">Afrobeats</button>
+                        <button class="style-chip sethnic" data-style="Reggaeton">Reggaeton</button>
+                        <button class="style-chip sethnic" data-style="Balkan">Balkan</button>
+                        <button class="style-chip sethnic" data-style="Persian">Persian</button>
+                    </div>
+                </div>
+
+                <!-- ELECTRONIC / DANCE -->
+                <div class="style-chip-row">
+                    <span class="style-cat-label cat-edm">⚡ Electronic</span>
+                    <div class="style-chips cat-edm-chips">
+                        <button class="style-chip sedm" data-style="EDM">EDM</button>
+                        <button class="style-chip sedm" data-style="House">House</button>
+                        <button class="style-chip sedm" data-style="Techno">Techno</button>
+                        <button class="style-chip sedm" data-style="Ambient">Ambient</button>
+                        <button class="style-chip sedm" data-style="Chillwave">Chillwave</button>
+                        <button class="style-chip sedm" data-style="Future Bass">Future Bass</button>
+                        <button class="style-chip sedm" data-style="Dubstep">Dubstep</button>
+                        <button class="style-chip sedm" data-style="Darkwave">Darkwave</button>
+                    </div>
+                </div>
+
+                <!-- CINEMATIC / MOOD -->
+                <div class="style-chip-row">
+                    <span class="style-cat-label cat-cin">🎬 Sinematik</span>
+                    <div class="style-chips cat-cin-chips">
+                        <button class="style-chip scin" data-style="Cinematic">Cinematic</button>
+                        <button class="style-chip scin" data-style="Epic Orchestral">Epic Orchestral</button>
+                        <button class="style-chip scin" data-style="Soundtrack">Soundtrack</button>
+                        <button class="style-chip scin" data-style="Dark Cinematic">Dark Cinematic</button>
+                        <button class="style-chip scin" data-style="Emotional Piano">Emotional Piano</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ NEGATIVE PROMPT CHIPS ════════════════════════════════════ -->
+            <div class="neg-prompt-panel">
+                <div class="neg-prompt-header">
+                    <span class="neg-prompt-title">🚫 İstenmeyen Özellikler</span>
+                    <span class="style-chip-hint">Seçilenleri Negative Prompt'a ekler</span>
+                </div>
+
+                <!-- VOCAL -->
+                <div class="neg-glass-card">
+                    <div class="neg-card-label">🎤 Vokal Kalitesi</div>
+                    <div class="chip-group" id="negativeChipGroup">
+                        <button class="chip"
+                            data-value="No excessive vocal belts, no screaming, no shouting, keep vocals smooth and controlled">🚫
+                            Bağırma</button>
+                        <button class="chip" data-value="No vocals, no singing, no voice, purely instrumental">🚫 Hiç
+                            Vokal</button>
+                        <button class="chip"
+                            data-value="No auto-tune, no pitch correction artifacts, natural raw vocals only">🚫
+                            Auto-Tune</button>
+                        <button class="chip" data-value="No heavy reverb on vocals, keep vocals dry and upfront">🚫
+                            Vokal Reverb</button>
+                        <button class="chip"
+                            data-value="No vocal delay, no echo effects on voice, clean dry vocal signal">🚫 Delay /
+                            Eko</button>
+                        <button class="chip"
+                            data-value="No vocal harmonizer, no stacked harmony layers, single lead vocal only">🚫
+                            Harmoni Stack</button>
+                        <button class="chip" data-value="No vocoder, no talkbox, no robotic vocal processing">🚫
+                            Vocoder</button>
+                        <button class="chip"
+                            data-value="No whisper vocals, no ASMR style, strong confident projection">🚫
+                            Fısıltı</button>
+                        <button class="chip"
+                            data-value="No mumble rap, no unintelligible lyrics, clear articulation required">🚫 Mumble
+                            Rap</button>
+                        <button class="chip" data-value="No female vocals, male voice only">🚫 Kadın Vokal</button>
+                        <button class="chip" data-value="No male vocals, female voice only">🚫 Erkek Vokal</button>
+                    </div>
+                </div>
+
+                <!-- PRODUCTION -->
+                <div class="neg-glass-card">
+                    <div class="neg-card-label">🎛 Prodüksiyon</div>
+                    <div class="chip-group">
+                        <button class="chip negChip"
+                            data-value="No lo-fi, no vinyl crackle, no tape hiss, pristine high fidelity">🚫
+                            Lo-Fi</button>
+                        <button class="chip negChip"
+                            data-value="No complex crowded arrangement, keep it minimal and sparse, avoid overproduction">🚫
+                            Aşırı Dolgu</button>
+                        <button class="chip negChip"
+                            data-value="No electronic instruments, no synthesizers, purely acoustic real instruments only">🚫
+                            Elektronik Enstr.</button>
+                        <button class="chip negChip"
+                            data-value="No acoustic instruments, no real pianos or guitars, strictly electronic production">🚫
+                            Akustik Enstr.</button>
+                        <button class="chip negChip"
+                            data-value="No heavy distortion, no clipping, clean and polished mix">🚫 Distortion</button>
+                        <button class="chip negChip"
+                            data-value="No excessive EQ boost, no harsh frequencies, warm balanced mix">🚫 Sert
+                            EQ</button>
+                        <button class="chip negChip"
+                            data-value="No sidechain pumping, no ducking effects, smooth constant dynamics">🚫 Sidechain
+                            Pump</button>
+                        <button class="chip negChip"
+                            data-value="No bass drop, no sudden frequency sweeps, steady progression">🚫 Bass
+                            Drop</button>
+                    </div>
+                </div>
+
+                <!-- GENRE EXCLUSION -->
+                <div class="neg-glass-card">
+                    <div class="neg-card-label">🎵 Tür Hariç</div>
+                    <div class="chip-group">
+                        <button class="chip negChip" data-value="No jazz influences, no swing rhythm, no bebop style">🚫
+                            Jazz</button>
+                        <button class="chip negChip" data-value="No country music style, no twangy guitar, no banjo">🚫
+                            Country</button>
+                        <button class="chip negChip" data-value="No reggae, no dancehall, no ska influences">🚫
+                            Reggae</button>
+                        <button class="chip negChip"
+                            data-value="No children's music style, no playful cartoon sound, serious and mature tone only">🚫
+                            Çocuk Müziği</button>
+                        <button class="chip negChip"
+                            data-value="No upbeat cheerful pop, no major key happiness, keep it dark and melancholic">🚫
+                            Neşeli Pop</button>
+                        <button class="chip negChip"
+                            data-value="No mezdeke, no belly dance rhythm, no dance floor vibe, avoid commercial arabesque cliché">🚫
+                            Mezdeke</button>
+                        <button class="chip negChip"
+                            data-value="No ambient new age music, no meditation style, no new age pads">🚫 New
+                            Age</button>
+                        <button class="chip negChip"
+                            data-value="No metal, no heavy guitar riffs, no thrash or death metal elements">🚫
+                            Metal</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ SETTINGS BAR ══════════════════════════════════════════════ -->
+            <div class="prompt-settings-bar">
+                <div class="prompt-setting-item">
+                    <label for="promptLangSelect">🌐 Prompt Dili</label>
+                    <select id="promptLangSelect">
+                        <option value="en">İngilizce</option>
+                        <option value="tr">Türkçe</option>
+                        <option value="mixed">Karma (TR+EN)</option>
+                    </select>
+                </div>
+                <div class="prompt-setting-item">
+                    <label for="vocalGenderSelect">🎤 Global Vokal</label>
+                    <select id="vocalGenderSelect">
+                        <option value="duo">Erkek + Kadın Düet</option>
+                        <option value="Kadın">Kadın Vokal</option>
+                        <option value="Erkek">Erkek Vokal</option>
+                        <option value="Koro">Koro / Choir</option>
+                        <option value="inst">Enstrümantal</option>
+                    </select>
+                </div>
+                <button id="btnGeneratePrompt" class="generate-prompt-btn">
+                    <span class="gpb-icon">✨</span> Prompt Üret
+                </button>
+            </div>
+
+            <!-- ═══ OUTPUT BOXES ══════════════════════════════════════════════ -->
+            <div id="promptOutputContainer" class="prompt-output" style="display: none;">
+                <div class="prompt-out-card">
+                    <div class="poc-header poc-style">
+                        <span>🎨 Style / Genre</span>
+                        <span class="poc-limit">Maks. 1000 karakter</span>
+                    </div>
+                    <textarea id="sunoStyleOutput" readonly class="poc-textarea"></textarea>
+                    <button class="poc-copy-btn" onclick="copyText('sunoStyleOutput', this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Kopyala</button>
+                </div>
+                <div class="prompt-out-card">
+                    <div class="poc-header poc-negative">
+                        <span>🚫 Negative Prompt</span>
+                    </div>
+                    <textarea id="sunoNegativeOutput" readonly class="poc-textarea poc-neg-ta"></textarea>
+                    <button class="poc-copy-btn" onclick="copyText('sunoNegativeOutput', this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Kopyala</button>
+                </div>
+                <div class="prompt-out-card">
+                    <div class="poc-header poc-lyrics">
+                        <span>📝 Lyrics / Yapı</span>
+                        <span class="poc-limit">Suno formatı</span>
+                    </div>
+                    <textarea id="sunoLyricsOutput" rows="12" readonly class="poc-textarea"></textarea>
+                    <button class="poc-copy-btn" onclick="copyText('sunoLyricsOutput', this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Kopyala</button>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <label style="color: #ff453a; font-weight: 600; display:block; margin-bottom:0.5rem;">🚫 İstenmeyen
+            Özellikler (Multi-Negative Prompt)</label>
+
+        <!-- VOCAL QUALITY -->
+        <div class="neg-chip-category">
+            <span class="neg-chip-label">🎤 Vokal</span>
+            <div class="chip-group" id="negativeChipGroup">
+                <button class="chip"
+                    data-value="No excessive vocal belts, no screaming, no shouting, keep vocals smooth and controlled">🚫
+                    Bağırma / Aşırı Vokal</button>
+                <button class="chip" data-value="No vocals, no singing, no voice, purely instrumental">🚫 Hiç
+                    Vokal Olmasın</button>
+                <button class="chip"
+                    data-value="No auto-tune, no pitch correction artifacts, natural raw vocals only">🚫
+                    Auto-Tune / Pitch Düzeltme</button>
+                <button class="chip"
+                    data-value="No heavy reverb on vocals, keep vocals dry and upfront, no washy wet vocal tail">🚫
+                    Vokal Reverb (Kuru Ses)</button>
+                <button class="chip" data-value="No vocal delay, no echo effects on voice, clean dry vocal signal">🚫
+                    Vokal Delay
+                    / Eko</button>
+                <button class="chip"
+                    data-value="No vocal harmonizer, no stacked harmony layers, single lead vocal only">🚫 Vokal
+                    Harmoni Stack</button>
+                <button class="chip" data-value="No vocoder, no talkbox, no robotic vocal processing">🚫 Vokal
+                    Efekti / Vocoder</button>
+                <button class="chip" data-value="No whisper vocals, no ASMR style, strong confident projection">🚫
+                    Fısıltı /
+                    Monoton Vokal</button>
+                <button class="chip"
+                    data-value="No mumble rap, no unintelligible lyrics, clear articulation required">🚫 Mumble
+                    / Anlaşılmaz Rap</button>
+                <button class="chip" data-value="No female vocals, male voice only">🚫 Kadın Vokal</button>
+                <button class="chip" data-value="No male vocals, female voice only">🚫 Erkek Vokal</button>
+            </div>
+        </div>
+
+        <!-- PRODUCTION / MIX -->
+        <div class="neg-chip-category" style="margin-top:0.6rem;">
+            <span class="neg-chip-label">🎛 Prodüksiyon</span>
+            <div class="chip-group">
+                <button class="chip negChip"
+                    data-value="No lo-fi, no vinyl crackle, no tape hiss, pristine audio quality, high fidelity">🚫
+                    Lo-Fi / Düşük Kalite</button>
+                <button class="chip negChip"
+                    data-value="No complex crowded arrangement, keep it minimal and sparse, avoid overproduction">🚫
+                    Karmaşık Mix (Minimal)</button>
+                <button class="chip negChip"
+                    data-value="No electronic instruments, no synthesizers, purely acoustic real instruments only">🚫
+                    Elektronik Enstrüman</button>
+                <button class="chip negChip"
+                    data-value="No acoustic instruments, no real pianos or guitars, strictly electronic production">🚫
+                    Akustik Enstrüman</button>
+                <button class="chip negChip" data-value="No heavy distortion, no clipping, clean and polished mix">🚫
+                    Distortion /
+                    Klipling</button>
+                <button class="chip negChip"
+                    data-value="No excessive EQ boost, no harsh frequencies, warm balanced mix">🚫 Sert / Yorucu
+                    EQ</button>
+                <button class="chip negChip"
+                    data-value="No sidechain pumping, no ducking effects, smooth constant dynamics">🚫 Sidechain
+                    Pump Efekti</button>
+                <button class="chip negChip"
+                    data-value="No bass drop, no sudden frequency sweeps, steady progression">🚫 Bass Drop /
+                    Sweep</button>
+            </div>
+        </div>
+
+        <!-- GENRE / STYLE EXCLUSIONS -->
+        <div class="neg-chip-category" style="margin-top:0.6rem;">
+            <span class="neg-chip-label">🎵 Tür</span>
+            <div class="chip-group">
+                <button class="chip negChip" data-value="No jazz influences, no swing rhythm, no bebop style">🚫
+                    Jazz / Swing</button>
+                <button class="chip negChip" data-value="No country music style, no twangy guitar, no banjo">🚫
+                    Country / Banjo</button>
+                <button class="chip negChip" data-value="No reggae, no dancehall, no ska influences">🚫 Reggae /
+                    Dancehall</button>
+                <button class="chip negChip"
+                    data-value="No children's music style, no playful cartoon sound, serious and mature tone only">🚫
+                    Çocuk Müziği Tarzı</button>
+                <button class="chip negChip"
+                    data-value="No upbeat cheerful pop, no major key happiness, keep it dark and melancholic">🚫
+                    Neşeli / Cıvıl Ses</button>
+                <button class="chip negChip"
+                    data-value="No mezdeke, no belly dance rhythm, no dance floor vibe, avoid commercial arabesque cliché">🚫
+                    Mezdeke / Oryantal Dans</button>
+                <button class="chip negChip"
+                    data-value="No ambient new age music, no meditation style, no new age pads">🚫 Ambient / New
+                    Age</button>
+                <button class="chip negChip"
+                    data-value="No metal, no heavy guitar riffs, no thrash or death metal elements">🚫 Metal /
+                    Ağır Gitar</button>
+            </div>
+        </div>
+        </div>
+
+
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end; margin-bottom:1rem;">
+            <div class="input-group" style="flex:1; min-width:160px; margin-bottom:0;">
+                <label for="promptLangSelect">🌐 Prompt Dili:</label>
+                <select id="promptLangSelect">
+                    <option value="en">İngilizce (English)</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="mixed">Karma (TR + EN)</option>
+                </select>
+            </div>
+            <div class="input-group" style="flex:1; min-width:160px; margin-bottom:0;">
+                <label for="vocalGenderSelect">🎤 Global Vokal Cinsiyeti:</label>
+                <select id="vocalGenderSelect">
+                    <option value="duo">Erkek + Kadın Düet</option>
+                    <option value="Kadın">Kadın Vokal</option>
+                    <option value="Erkek">Erkek Vokal</option>
+                    <option value="Koro">Koro / Choir</option>
+                    <option value="inst">Enstrümantal</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="btnGeneratePrompt" class="secondary-btn">Suno Prompt Oluştur</button>
+
+        <div id="promptOutputContainer" class="prompt-output" style="display: none;">
+            <div class="prompt-box">
+                <h3>Style / Genre (Maks. 1000 Karakter)</h3>
+                <div class="copy-box">
+                    <textarea id="sunoStyleOutput" readonly></textarea>
+                    <button class="copy-btn" onclick="copyText('sunoStyleOutput', this)">Kopyala</button>
+                </div>
+            </div>
+            <div class="prompt-box">
+                <h3 style="color: #ff453a;">Negative Prompt / Exclude (İstenmeyenler)</h3>
+                <div class="copy-box">
+                    <textarea id="sunoNegativeOutput" readonly></textarea>
+                    <button class="copy-btn" onclick="copyText('sunoNegativeOutput', this)">Kopyala</button>
+                </div>
+            </div>
+            <div class="prompt-box">
+                <h3>Lyrics / Yapı (Aranje Kodları)</h3>
+                <div class="copy-box">
+                    <textarea id="sunoLyricsOutput" rows="10" readonly></textarea>
+                    <button class="copy-btn" onclick="copyText('sunoLyricsOutput', this)">Kopyala</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        </section>
+    </main>
+
+    <!-- Scroll Navigation -->
+    <div class="scroll-navigation">
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Yukarı Çık">⬆</button>
+        <button onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})"
+            title="Aşağı İn">⬇</button>
+    </div>
+
+    <!-- Save Project Modal -->
+    <div id="saveModalOverlay" class="save-modal-overlay">
+        <div class="save-modal-card">
+            <h3>💾 Projeyi Kaydet</h3>
+            <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 1.5rem;">Aşağıdaki bilgileri
+                doldurun. Proje bir <strong>.pcs</strong> dosyası olarak indirilecektir.</p>
+            <div class="input-group">
+                <label>🎵 Şarchı Adı</label>
+                <input type="text" id="saveFieldSongName" placeholder="ör. Gece Treni" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>🎤 Sanatçı / Proje Adı</label>
+                <input type="text" id="saveFieldArtistName" placeholder="ör. Massivefx" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>📁 Kayıt Konumu / Etiket</label>
+                <input type="text" id="saveFieldProjectTag" placeholder="ör. Demo, Album 1, Ara Kayıt"
+                    autocomplete="off">
+            </div>
+            <div class="save-modal-buttons">
+                <button class="primary-btn" onclick="confirmSaveProject()">💾 Kayıt & İndir</button>
+                <button class="icon-btn" onclick="closeSaveModal()">vazgeç</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dependencies -->
+    <!-- Local MIDI builder (no CDN dependency) -->
+    <button id="btnToggleLyrics" class="floating-lyrics-btn" title="Şarkı Sözlerini Aç/Kapat">
+        <span style="font-size: 1.2rem;">📝</span> Sözler
+    </button>
+
+    <aside id="lyricsSidebar" class="lyrics-sidebar open">
+        <div class="lyrics-sidebar-header">
+            <h3>Şarkı Sözleri</h3>
+            <button id="btnCloseLyrics" class="icon-btn small-btn" style="color: #ff453a;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </div>
+        <p class="description" style="margin-bottom: 1rem; font-size: 0.85rem;">Şarkı sözlerinizi buraya yapıştırın.
+            Sistem bu sözleri otomatik olarak Intro, Verse, Chorus gibi oluşturulan aranje dizilimine bölüp
+            yerleştirecektir.</p>
+        <textarea id="customLyricsInput" placeholder="Satır boşluklarına dikkat ederek yapıştırın..."
+            style="width: 100%; height: calc(100% - 170px); background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px; font-family: inherit; resize: none; margin-bottom: 10px;"></textarea>
+
+        <button id="btnAnalyzeLyrics" class="primary-btn" style="width: 100%; font-size: 0.9rem; padding: 10px;">
+            🔍 Sözlere Göre Analiz Et
+        </button>
+    </aside>
+
+    <script src="midi.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

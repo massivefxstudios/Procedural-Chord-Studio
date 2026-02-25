@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <script>
+        const originalVal = "A Minor (Nihavend)";
+        const keySig = "F#";
+        const firstSpaceIndex = originalVal.indexOf(' ');
+        if (firstSpaceIndex !== -1) {
+            const flavor = originalVal.substring(firstSpaceIndex + 1);
+            console.log("Success:", keySig + " " + flavor);
+            document.write("Success: " + keySig + " " + flavor);
+        } else {
+            document.write("Fallback: " + keySig);
+        }
+    </script>
+</body>
+
+</html>
