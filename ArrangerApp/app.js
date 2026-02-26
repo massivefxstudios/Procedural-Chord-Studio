@@ -1865,23 +1865,16 @@ function stopTimeline() {
 const AI_KEY_STORAGE = 'pcs_openai_key';
 const AI_MODEL_STORAGE = 'pcs_openai_model';
 
-// Auto-initialize API key on first load
-(function initApiKey() {
-    if (!localStorage.getItem(AI_KEY_STORAGE)) {
-        // API key is split to prevent accidental detection - join at runtime
-        const _p1 = 'sk-proj-qIEy494vCVe4B0ZNMyAH27ky1lbiBvLrabVl';
-        const _p2 = 'R-Idfla0WD98tLH18Dh8vl1VifWa4eKdIGDRzPT3';
-        const _p3 = 'BlbkFJvdVXDQpLqvDWGnBIAqoZzy4HqrdQXtUOExE';
-        const _p4 = 'JKuNbKD7lMHWm1TQy8SY1xlwrmvE1zLGyoV3T8A';
-        localStorage.setItem(AI_KEY_STORAGE, [_p1,_p2,_p3,_p4].join(''));
+// Auto-initialize settings on first load
+(function initSettings() {
+    if (!localStorage.getItem(AI_MODEL_STORAGE)) {
         localStorage.setItem(AI_MODEL_STORAGE, 'gpt-4o-mini');
     }
 })();
 
 function openApiKeyModal() {
     const modal = document.getElementById('apiKeyModal');
-    if (modal.parentElement !== document.body) { document.body.appendChild(modal); }
-    modal.style.cssText = 'display:flex;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.72);backdrop-filter:blur(8px);z-index:99999;align-items:center;justify-content:center;';
+    modal.style.display = 'flex';
     const saved = localStorage.getItem(AI_KEY_STORAGE) || '';
     document.getElementById('apiKeyInput').value = saved;
     const savedModel = localStorage.getItem(AI_MODEL_STORAGE) || 'gpt-4o-mini';
@@ -1945,8 +1938,8 @@ async function generateLyricsWithAI() {
     try {
         const currentScale = document.getElementById('scaleSelect')?.value || 'C# Harmonic Minor';
         const bpm = document.getElementById('bpm')?.value || '95';
-        const genre = document.getElementById('genreInput')?.value || 'Pop';
-        const mood = document.getElementById('moodInput')?.value || 'Melankolik';
+        const genre = document.getElementById('genreSelect')?.value || 'Pop';
+        const mood = document.getElementById('moodSelect')?.value || 'Melankolik';
         const transposeOffset = getGlobalTransposeOffset();
 
         const sections = currentArrangement.map((sec, i) => {
@@ -1986,7 +1979,11 @@ async function generateLyricsWithAI() {
         }, 10);
 
     } catch (err) {
-        alert('AI Hatasi: ' + err.message + '\n\nAPI anahtarinizi ayar butonundan kontrol edin.');
+        let errorMsg = err.message;
+        if (errorMsg.includes('quota') || errorMsg.includes('exceeded') || errorMsg.includes('429')) {
+            errorMsg = "OpenAI API kotaniz dolmus veya faturaniz odenmemis. Lutfen platform.openai.com uzerinden hesabinizi kontrol edin.";
+        }
+        alert('AI Hatasi: ' + errorMsg + '\n\nAPI anahtarinizi ayar butonundan kontrol edin.');
     } finally {
         btn.disabled = false;
         btn.classList.remove('loading');
@@ -1994,6 +1991,41 @@ async function generateLyricsWithAI() {
         spinner.style.display = 'none';
     }
 }
+
+// --- UI Toggle & Trigger Handlers ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Suno Prompt Generator trigger
+    const btnGenPrompt = document.getElementById('btnGeneratePrompt');
+    if (btnGenPrompt) btnGenPrompt.addEventListener('click', generateSunoPrompt);
+
+    // Lyrics Sidebar toggle
+    const btnToggleLyrics = document.getElementById('btnToggleLyrics');
+    const btnCloseLyrics = document.getElementById('btnCloseLyrics');
+    const sidebar = document.getElementById('lyricsSidebar');
+
+    if (btnToggleLyrics && sidebar) {
+        btnToggleLyrics.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+    }
+    if (btnCloseLyrics && sidebar) {
+        btnCloseLyrics.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+        });
+    }
+
+    // Analyze Lyrics trigger
+    const btnAnalyze = document.getElementById('btnAnalyzeLyrics');
+    if (btnAnalyze) {
+        btnAnalyze.addEventListener('click', () => {
+            generateSunoPrompt();
+            // Pulse effect as feedback
+            btnAnalyze.classList.add('btn-success-glow');
+            setTimeout(() => btnAnalyze.classList.remove('btn-success-glow'), 1000);
+        });
+    }
+});
 // --- Suno AI Prompt Generator ---
 
 function generateSunoPrompt() {
@@ -3396,6 +3428,34 @@ document.querySelectorAll('.style-chip, .style-chipstrap').forEach(btn => {
     });
 });
 
+// ── Negative Chip Injector ───────────────────────────────────────────────
+document.querySelectorAll('.negChip').forEach(btn => {
+    btn.addEventListener('click', () => {
+        btn.classList.toggle('active');
+        generateSunoPrompt();
+    });
+});
+
+// ── Copy to Clipboard Helper ─────────────────────────────────────────────
+function copyText(elementId, btn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+
+    el.select();
+    el.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(el.value).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✓ Kopyalandı!';
+        btn.style.color = '#32d74b';
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.color = '';
+        }, 2000);
+    }).catch(err => {
+        console.error('Copy error:', err);
+    });
+}
+
 // === Load Default Arrangement on Startup ===
 window.addEventListener('load', () => {
     // Check if empty, generate initial structure automatically
@@ -3405,6 +3465,169 @@ window.addEventListener('load', () => {
     }
 });
 
+// === OpenAI API Integration ===
+const OPENAI_KEY_STORAGE = 'chord_studio_openai_key';
 
+window.openApiKeyModal = function () {
+    document.getElementById('apiKeyModal').style.display = 'flex';
+    const savedKey = localStorage.getItem(OPENAI_KEY_STORAGE);
+    if (savedKey) {
+        document.getElementById('apiKeyInput').value = savedKey;
+        document.getElementById('apiKeyStatus').innerHTML = '✅ API Anahtarı yüklendi.';
+        document.getElementById('apiKeyStatus').style.color = '#32d74b';
+    } else {
+        document.getElementById('apiKeyInput').value = '';
+        document.getElementById('apiKeyStatus').innerHTML = '❌ Kayıtlı anahtar yok.';
+        document.getElementById('apiKeyStatus').style.color = '#ff453a';
+    }
+};
 
+window.closeApiKeyModal = function () {
+    document.getElementById('apiKeyModal').style.display = 'none';
+};
 
+window.toggleKeyVisibility = function () {
+    const input = document.getElementById('apiKeyInput');
+    if (input.type === 'password') {
+        input.type = 'text';
+    } else {
+        input.type = 'password';
+    }
+};
+
+window.saveApiKey = function () {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (!key) {
+        document.getElementById('apiKeyStatus').innerHTML = 'Lütfen geçerli bir anahtar girin.';
+        document.getElementById('apiKeyStatus').style.color = '#ff9f0a';
+        return;
+    }
+    if (!key.startsWith('sk-')) {
+        document.getElementById('apiKeyStatus').innerHTML = 'Anahtar sk- ile başlamalıdır.';
+        document.getElementById('apiKeyStatus').style.color = '#ff9f0a';
+        return;
+    }
+    localStorage.setItem(OPENAI_KEY_STORAGE, key);
+    document.getElementById('apiKeyStatus').innerHTML = '✅ Kaydedildi!';
+    document.getElementById('apiKeyStatus').style.color = '#32d74b';
+    setTimeout(closeApiKeyModal, 1000);
+};
+
+window.clearApiKey = function () {
+    localStorage.removeItem(OPENAI_KEY_STORAGE);
+    document.getElementById('apiKeyInput').value = '';
+    document.getElementById('apiKeyStatus').innerHTML = '🗑 Silindi.';
+    document.getElementById('apiKeyStatus').style.color = '#ff453a';
+};
+
+window.generateLyricsWithAI = async function () {
+    const apiKey = localStorage.getItem(OPENAI_KEY_STORAGE);
+    if (!apiKey) {
+        openApiKeyModal();
+        return;
+    }
+
+    if (!currentArrangement || currentArrangement.length === 0) {
+        alert("Lütfen önce bir aranje yapısı oluşturun!");
+        return;
+    }
+
+    // Determine the structure from currentArrangement
+    let sectionCounts = {};
+    let structureList = [];
+    currentArrangement.forEach(s => {
+        const type = s.type; // intro, verse, chorus, etc.
+        if (!sectionCounts[type]) sectionCounts[type] = 0;
+        sectionCounts[type]++;
+
+        let label = `[${type.charAt(0).toUpperCase() + type.slice(1)}`;
+        if (type === 'verse' || type === 'chorus' || type === 'bridge') {
+            label += ` ${sectionCounts[type]}]`;
+        } else {
+            label += ']';
+        }
+        structureList.push(label);
+    });
+    const structure = structureList.join('\\n');
+
+    const lang = document.getElementById('aiLyricLang')?.value || 'tr';
+    const style = document.getElementById('aiLyricStyle')?.value || 'poetic';
+    const genre = document.getElementById('genreSelect')?.value || 'Turkish Pop';
+    const mood = document.getElementById('moodSelect')?.value || 'Melancholic';
+    const model = document.getElementById('aiModelSelect')?.value || 'gpt-4o-mini';
+
+    const promptText = `Sen profesyonel bir söz yazarısın. Aşağıdaki yapıya tam uygun olarak ${lang === 'en' ? 'İngilizce' : lang === 'mixed' ? 'Yarısı İngilizce yarısı Türkçe' : 'Türkçe'} şarkı sözü yaz.
+Tür: ${genre}
+Atmosfer: ${mood}
+Tonal Özellik ve Tarz (Tema): ${style}.
+
+Şarkı Yapısı (Aranje):
+${structure}
+
+Lütfen sadece şarkı sözlerini ver. Her bölümün başına yapıda belirtilen [Intro], [Verse 1] vb. etiketleri koy. Nakaratlar (Chorus) aynı veya çok benzer sözlere sahip olsun. Akılda kalıcı, kısa ve müzikal cümleler kullan.`;
+
+    const spinner = document.getElementById('aiLyricsSpinner');
+    const btnText = document.querySelector('#btnAiLyrics .ai-btn-text');
+    const outputInput = document.getElementById('customLyricsInput');
+
+    if (spinner) spinner.style.display = 'inline-block';
+    if (btnText) btnText.textContent = 'Üretiliyor...';
+    if (outputInput) outputInput.disabled = true;
+
+    try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: model,
+                messages: [
+                    { role: 'system', content: 'You are a highly creative and experienced songwriter.' },
+                    { role: 'user', content: promptText }
+                ],
+                temperature: 0.8,
+                max_tokens: 1000
+            })
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.error?.message || 'API Hatası');
+        }
+
+        const data = await response.json();
+        const generatedLyrics = data.choices[0].message.content.trim();
+
+        // Typewriter effect
+        if (outputInput) {
+            outputInput.value = '';
+            let i = 0;
+            function typeWriter() {
+                if (i < generatedLyrics.length) {
+                    outputInput.value += generatedLyrics.charAt(i);
+                    outputInput.scrollTop = outputInput.scrollHeight;
+                    i++;
+                    setTimeout(typeWriter, 15);
+                } else {
+                    outputInput.disabled = false;
+                    if (spinner) spinner.style.display = 'none';
+                    if (btnText) btnText.textContent = 'AI Söz Üret';
+                    if (typeof generateSunoPrompt === 'function') generateSunoPrompt();
+                }
+            }
+            typeWriter();
+        }
+
+    } catch (error) {
+        let errorMsg = error.message;
+        if (errorMsg.includes('quota') || errorMsg.includes('exceeded') || errorMsg.includes('429')) {
+            errorMsg = "OpenAI API kotanız dolmuş veya faturanız ödenmemiş. Lütfen platform.openai.com üzerinden hesabınızı kontrol edin.";
+        }
+        alert("Hata oluştu: " + errorMsg);
+        if (outputInput) outputInput.disabled = false;
+        if (spinner) spinner.style.display = 'none';
+        if (btnText) btnText.textContent = 'AI Söz Üret';
+    }
+};

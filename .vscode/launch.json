@@ -1,15 +1,20 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "🎵 Chord Studio (Python Server + Chrome)",
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}/ArrangerApp",
+            "preLaunchTask": "Start Python Server"
+        },
+        {
+            "name": "🌐 Chrome (Server zaten çalışıyor)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}/ArrangerApp"
         }
     ]
 }

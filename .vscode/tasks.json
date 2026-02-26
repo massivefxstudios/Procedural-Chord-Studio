@@ -1,0 +1,28 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start Python Server",
+            "type": "shell",
+            "command": "cmd /c debug_server.bat",
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "custom",
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "Adres:"
+                },
+                "pattern": {
+                    "regexp": "^$"
+                }
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        }
+    ]
+}
